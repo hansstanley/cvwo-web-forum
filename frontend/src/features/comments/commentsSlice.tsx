@@ -8,7 +8,8 @@ interface CommentsState {
 const initialState: CommentsState = {
 	comments: [
 		{
-			content: 'First comment!',
+			content:
+				'First comment that is really really really really really really really really really really long',
 			upVoteCount: 10,
 			downVoteCount: 1,
 			createdAt: '2022-01-01 01:01:01',

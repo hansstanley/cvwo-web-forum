@@ -2,7 +2,7 @@ import { Box, Divider, Paper } from '@mui/material';
 import { Stack } from '@mui/system';
 import { PostAccordion, PostDetail } from '../features/posts';
 
-import PostSearch from './PostSearch';
+import PostSearch from '../features/posts/PostSearch';
 
 export default function MainFrame() {
 	return (

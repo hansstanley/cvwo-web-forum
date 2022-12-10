@@ -5,7 +5,6 @@ import { useAppSelector } from '../../app/hooks';
 import PostAddDialog from './PostAddDialog';
 
 export default function PostAddFab() {
-	const { currPost } = useAppSelector((state) => state.posts);
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const toggleDialogOpen = (open: boolean) => () => {
@@ -17,7 +16,6 @@ export default function PostAddFab() {
 			<Tooltip title="Create post">
 				<Fab
 					color="primary"
-					disabled={!currPost}
 					onClick={toggleDialogOpen(true)}
 					sx={{ position: 'fixed', bottom: 16, right: 16 }}>
 					<Add />

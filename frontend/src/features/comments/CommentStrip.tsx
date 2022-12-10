@@ -1,6 +1,7 @@
-import { Reply } from '@mui/icons-material';
+import { Delete, Edit, MoreHoriz, Reply } from '@mui/icons-material';
 import {
 	Box,
+	ButtonGroup,
 	Collapse,
 	colors,
 	Divider,
@@ -46,15 +47,38 @@ export default function CommentStrip({
 		</Stack>
 	);
 
+	const buttons = canReply ? (
+		<Stack direction="column">
+			<IconButton size="small" onClick={toggleReplyOpen(true)}>
+				<Reply fontSize="inherit" />
+			</IconButton>
+			<IconButton size="small">
+				<Edit fontSize="inherit" />
+			</IconButton>
+			<IconButton size="small">
+				<Delete fontSize="inherit" />
+			</IconButton>
+		</Stack>
+	) : null;
+
 	return (
 		<ListItem disablePadding sx={{ flex: 1 }}>
 			<Stack direction="row" flex={1} my={1} alignItems="flex-start">
 				<Divider orientation="vertical" flexItem />
 				<Stack direction="column" flex={1}>
-					<ListItemButton onClick={toggleSubOpen} sx={{ borderRadius: 1 }}>
-						<Stack direction="column" spacing={1}>
+					<ListItemButton
+						onClick={toggleSubOpen}
+						sx={{ flex: 1, borderRadius: 1 }}>
+						<Stack flex={1} direction="column" spacing={1}>
 							{header}
 							<Typography variant="body1">{comment.content}</Typography>
+							{comment.subComments ? (
+								<MoreHoriz
+									fontSize="small"
+									color="disabled"
+									sx={{ alignSelf: 'center' }}
+								/>
+							) : null}
 						</Stack>
 					</ListItemButton>
 					{comment.subComments ? (
@@ -63,11 +87,7 @@ export default function CommentStrip({
 						</Collapse>
 					) : null}
 				</Stack>
-				{canReply ? (
-					<IconButton size="small" onClick={toggleReplyOpen(true)}>
-						<Reply fontSize="inherit" />
-					</IconButton>
-				) : null}
+				{buttons}
 			</Stack>
 			{canReply ? (
 				<CommentReply
