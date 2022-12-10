@@ -3,6 +3,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Button,
 	Chip,
 	Stack,
 	Typography,
@@ -10,12 +11,13 @@ import {
 import { Box } from '@mui/system';
 import { SyntheticEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setCurrPostId } from './postsSlice';
+import { selectCurrPostTags, setCurrPostId } from './postsSlice';
 
 export default function PostAccordion() {
 	const dispatch = useAppDispatch();
 
 	const { currPost, posts } = useAppSelector((state) => state.posts);
+	const currPostTags = useAppSelector(selectCurrPostTags);
 
 	const handleChange =
 		(postId: number) => (event: SyntheticEvent, isExpanded: boolean) => {
@@ -37,15 +39,20 @@ export default function PostAccordion() {
 					<AccordionDetails>
 						<Stack direction="column" spacing={2}>
 							<Stack direction="row" spacing={1}>
-								<Chip label="Chip 1" />
-								<Chip label="Chip 2" />
-								<Chip label="Chip 3" />
+								{currPostTags.map((tag) => (
+									<Chip label={tag} />
+								))}
 							</Stack>
 							<Typography>{post.description}</Typography>
 						</Stack>
 					</AccordionDetails>
 				</Accordion>
 			))}
+			<Accordion expanded={false}>
+				<AccordionSummary>
+					<Button>Load more</Button>
+				</AccordionSummary>
+			</Accordion>
 		</Box>
 	);
 }

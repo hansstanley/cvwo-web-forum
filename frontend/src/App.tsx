@@ -2,18 +2,19 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Box, CssBaseline, Toolbar } from '@mui/material';
-import { AddPostFab, MainAppBar, MainFrame } from './components';
+import { MainAppBar, MainFrame } from './components';
+import { PostAddFab } from './features/posts';
 
 function App() {
 	return (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
 			<MainAppBar />
-			<Box component="main" sx={{ flexGrow: 1, padding: 2 }}>
+			<Box component="main" sx={{ flex: 1 }}>
 				<Toolbar />
 				<MainFrame />
 			</Box>
-			<AddPostFab />
+			<PostAddFab />
 		</Box>
 	);
 }
