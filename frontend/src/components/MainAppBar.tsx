@@ -1,6 +1,6 @@
-import { AppBar, Button, Toolbar, Typography } from '@mui/material';
+import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { useState } from 'react';
+import { ThemeToggle } from '../features/theme';
 import { UserAuthButton } from '../features/user';
 
 export default function MainAppBar() {
@@ -10,6 +10,7 @@ export default function MainAppBar() {
 				<Typography variant="h6">CVWO Web Forum</Typography>
 				<Box sx={{ flexGrow: 1 }} />
 				<UserAuthButton />
+				<ThemeToggle />
 			</Toolbar>
 		</AppBar>
 	);

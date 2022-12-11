@@ -1,4 +1,5 @@
 import { Close } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
 	Button,
@@ -6,13 +7,17 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
+	DialogContentText,
 	DialogTitle,
 	IconButton,
 	Stack,
 	TextField,
 	Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { handleUserLogin } from './userApi';
+import { onLoginFailure, onLoginStart, onLoginSuccess } from './userSlice';
 
 export interface UserLoginDialogProps {
 	open: boolean;
@@ -23,18 +28,39 @@ export default function UserLoginDialog({
 	open,
 	onClose,
 }: UserLoginDialogProps) {
-	const [alertOpen, setAlertOpen] = useState(false);
+	const dispatch = useAppDispatch();
+	const { loading } = useAppSelector((state) => state.user);
+	const [alertOpen, setAlertOpen] = useState<boolean>(false);
+	const [alertMessage, setAlertMessage] = useState<string>('');
+	const [username, setUsername] = useState<string>('');
 
-	const handleLogin = () => {
-		setAlertOpen(true);
+	const handleLogin = async () => {
+		setAlertOpen(false);
+		try {
+			dispatch(onLoginStart());
+			const user = await handleUserLogin(username);
+			dispatch(onLoginSuccess(user));
+			handleClose();
+		} catch (e) {
+			dispatch(onLoginFailure());
+			if (e instanceof Error) {
+				setAlertMessage(e.message);
+			} else if (typeof e === 'string') {
+				setAlertMessage(e);
+			}
+			setAlertOpen(true);
+		}
 	};
 
 	const handleClose = () => {
 		onClose();
+		setAlertOpen(false);
+		setAlertMessage('');
+		setUsername('');
 	};
 
-	const handleAlertClose = () => {
-		setAlertOpen(false);
+	const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setUsername(event.target.value);
 	};
 
 	return (
@@ -42,28 +68,31 @@ export default function UserLoginDialog({
 			<DialogTitle>Login</DialogTitle>
 			<DialogContent>
 				<Stack direction="column" spacing={2}>
-					<Typography variant="body1">
+					<DialogContentText>
 						Login with your username here to contribute to the forum.
-					</Typography>
-					<TextField required label="Username" variant="outlined" />
-					<Collapse in={alertOpen}>
-						<Alert
-							severity="error"
-							action={
-								<IconButton onClick={handleAlertClose} size="small">
-									<Close fontSize="inherit" />
-								</IconButton>
-							}>
-							Error message goes here!
-						</Alert>
-					</Collapse>
+					</DialogContentText>
+					<TextField
+						autoFocus
+						required
+						id="username"
+						type="text"
+						error={alertOpen}
+						label="Username"
+						value={username}
+						helperText={alertMessage}
+						variant="outlined"
+						onChange={handleUsernameChange}
+					/>
 				</Stack>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
-				<Button variant="contained" onClick={handleLogin}>
+				<LoadingButton
+					loading={loading}
+					variant="contained"
+					onClick={handleLogin}>
 					Login
-				</Button>
+				</LoadingButton>
 			</DialogActions>
 		</Dialog>
 	);

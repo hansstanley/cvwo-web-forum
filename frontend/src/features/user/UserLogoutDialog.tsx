@@ -6,6 +6,8 @@ import {
 	DialogTitle,
 	Typography,
 } from '@mui/material';
+import { useAppDispatch } from '../../app/hooks';
+import { onLogout } from './userSlice';
 
 export interface UserLogoutDialogProps {
 	open: boolean;
@@ -16,7 +18,12 @@ export default function UserLogoutDialog({
 	open,
 	onClose,
 }: UserLogoutDialogProps) {
-	const handleLogout = () => {};
+	const dispatch = useAppDispatch();
+
+	const handleLogout = () => {
+		dispatch(onLogout());
+		onClose();
+	};
 
 	const handleClose = () => {
 		onClose();

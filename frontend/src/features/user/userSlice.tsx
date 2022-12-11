@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../../types';
 
 interface UserState {
@@ -16,7 +16,31 @@ const initialState: UserState = {
 const userSlice = createSlice({
 	name: 'user',
 	initialState,
-	reducers: {},
+	reducers: {
+		onLoginStart: (state) => {
+			state.loading = true;
+			state.success = false;
+		},
+		onLoginSuccess: (state, action: PayloadAction<User>) => {
+			state.loading = false;
+			state.success = true;
+			state.userInfo = action.payload;
+		},
+		onLoginFailure: (state) => {
+			state.loading = false;
+			state.success = false;
+			state.userInfo = undefined;
+			state.userToken = undefined;
+		},
+		onLogout: (state) => {
+			state.success = false;
+			state.userInfo = undefined;
+			state.userToken = undefined;
+		},
+	},
 });
+
+export const { onLoginStart, onLoginSuccess, onLoginFailure, onLogout } =
+	userSlice.actions;
 
 export default userSlice.reducer;

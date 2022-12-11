@@ -91,11 +91,19 @@ const postsSlice = createSlice({
 		setSearchTerm: (state, action: PayloadAction<string>) => {
 			state.searchTerm = action.payload;
 		},
+		setPosts: (state, action: PayloadAction<ForumPost[]>) => {
+			state.posts = action.payload;
+		},
 	},
 });
 
-export const { setCurrPostId, addSearchTag, dropSearchTag, setSearchTerm } =
-	postsSlice.actions;
+export const {
+	setCurrPostId,
+	addSearchTag,
+	dropSearchTag,
+	setSearchTerm,
+	setPosts,
+} = postsSlice.actions;
 
 export const selectPostsTags: (state: RootState) => string[] = (state) => {
 	const tags = new Set<string>();
@@ -118,10 +126,15 @@ export const selectFilteredPosts: (state: RootState) => ForumPost[] = (
 			.filter((t) => !!t)
 			.map((t) => t.toLowerCase()) ?? [];
 	const filterString = (s: string) =>
-		terms.reduce((prev, curr) => prev || s.includes(curr), false);
-	return state.posts.posts.filter(
-		(post) => filterString(post.title) || filterString(post.description),
-	);
+		terms.reduce((prev, curr) => prev || s.toLowerCase().includes(curr), false);
+	return terms.length === 0
+		? state.posts.posts
+		: state.posts.posts.filter(
+				(post) =>
+					filterString(post.title) ||
+					filterString(post.description) ||
+					filterString(post.createdBy?.username ?? ''),
+		  );
 };
 
 export default postsSlice.reducer;

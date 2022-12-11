@@ -1,35 +1,89 @@
+import { Add } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
 	Button,
 	Chip,
+	Collapse,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Divider,
+	IconButton,
+	InputAdornment,
 	Stack,
 	TextField,
 	Typography,
+	Zoom,
 } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { selectPostsTags } from './postsSlice';
+import { ChangeEvent, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { ForumPost } from '../../types';
+import { createPost, updatePost } from './postApi';
+import { selectPostsTags, setPosts } from './postsSlice';
 
 export interface PostAddDialogProps {
 	open: boolean;
 	onClose: () => void;
+	postToEdit?: ForumPost;
 }
 
-export default function PostAddDialog({ open, onClose }: PostAddDialogProps) {
+export default function PostAddDialog({
+	open,
+	onClose,
+	postToEdit,
+}: PostAddDialogProps) {
+	const dispatch = useAppDispatch();
+	const { userInfo } = useAppSelector((state) => state.user);
 	const postsTags = useAppSelector(selectPostsTags);
-	const [content, setContent] = useState<string>('');
-	const [activeTags, setActiveTags] = useState<string[]>([]);
+	const isEdit = useMemo(() => !!postToEdit, [postToEdit]);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [title, setTitle] = useState<string>(postToEdit?.title ?? '');
+	const [description, setDescription] = useState<string>(
+		postToEdit?.description ?? '',
+	);
+	const [newTag, setNewTag] = useState<string>('');
+	const [activeTags, setActiveTags] = useState<string[]>(
+		postToEdit?.tags ?? [],
+	);
 
 	const handleClose = () => {
 		onClose();
+		setTitle('');
+		setDescription('');
+		setActiveTags([]);
 	};
 
-	const handleContentChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setContent(event.target.value);
+	const handlePost = async () => {
+		setLoading(true);
+		const newPost: ForumPost = {
+			postId: postToEdit?.postId ?? -1, // ignored
+			title,
+			description,
+			tags: activeTags,
+			createdAt: new Date().toISOString(),
+			createdBy: userInfo,
+		};
+
+		try {
+			const posts = isEdit
+				? await updatePost(newPost)
+				: await createPost(newPost);
+			dispatch(setPosts(posts));
+			handleClose();
+		} catch (e) {
+			console.log(e);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setTitle(event.target.value);
+	};
+
+	const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setDescription(event.target.value);
 	};
 
 	const handleTagClick = (tag: string) => () => {
@@ -40,41 +94,86 @@ export default function PostAddDialog({ open, onClose }: PostAddDialogProps) {
 		setActiveTags(activeTags.filter((t) => t !== tag));
 	};
 
+	const handleTagAdd = () => {
+		handleTagClick(newTag)();
+		setNewTag('');
+	};
+
+	const handleNewTagChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setNewTag(event.target.value);
+	};
+
 	return (
-		<Dialog open={open} onClose={handleClose}>
-			<DialogTitle>Have something to say?</DialogTitle>
+		<Dialog open={open} onClose={handleClose} fullWidth>
+			<DialogTitle>{isEdit ? 'Edit' : 'Create'} post</DialogTitle>
 			<DialogContent>
 				<Stack direction="column" spacing={1}>
-					<Typography>Create a new forum post:</Typography>
 					<TextField
 						fullWidth
-						label="Write something..."
+						required
+						label="Title"
+						value={title}
+						onChange={handleTitleChange}
+					/>
+					<TextField
+						fullWidth
+						required
 						multiline
 						maxRows={4}
-						onChange={handleContentChange}
+						rows={2}
+						label="Description"
+						value={description}
+						onChange={handleDescriptionChange}
 					/>
 					<Divider orientation="horizontal" flexItem />
 					<Typography>Choose tags (optional):</Typography>
-					<Stack direction="row" spacing={1}>
-						{postsTags.map((tag) =>
-							activeTags.includes(tag) ? (
-								<Chip
-									label={tag}
-									variant="outlined"
-									onDelete={handleTagDelete(tag)}
-								/>
-							) : (
-								<Chip label={tag} onClick={handleTagClick(tag)} />
+					<TextField
+						fullWidth
+						placeholder="Add tags..."
+						value={newTag}
+						onChange={handleNewTagChange}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position="start">
+									<Stack direction="row" spacing={1}>
+										{activeTags.map((tag) => (
+											<Chip
+												label={tag}
+												variant="outlined"
+												onDelete={handleTagDelete(tag)}
+											/>
+										))}
+									</Stack>
+								</InputAdornment>
 							),
-						)}
+							endAdornment: (
+								<InputAdornment position="end">
+									<Zoom in={!!newTag}>
+										<IconButton onClick={handleTagAdd}>
+											<Add />
+										</IconButton>
+									</Zoom>
+								</InputAdornment>
+							),
+						}}
+					/>
+					<Stack direction="row" spacing={1}>
+						{postsTags
+							.filter((tag) => !activeTags.includes(tag))
+							.map((tag) => (
+								<Chip label={tag} onClick={handleTagClick(tag)} />
+							))}
 					</Stack>
 				</Stack>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
-				<Button variant="contained" disabled={content.length < 10}>
-					Post
-				</Button>
+				<LoadingButton
+					loading={loading}
+					onClick={handlePost}
+					variant="contained">
+					{isEdit ? 'Edit' : 'Post'}
+				</LoadingButton>
 			</DialogActions>
 		</Dialog>
 	);

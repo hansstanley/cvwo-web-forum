@@ -1,4 +1,4 @@
-import { Clear, Close, Search } from '@mui/icons-material';
+import { Clear, Close, Search, UnfoldLess } from '@mui/icons-material';
 import {
 	Button,
 	Card,
@@ -12,14 +12,20 @@ import {
 	Stack,
 	TextField,
 	Typography,
+	Zoom,
 } from '@mui/material';
-import { FocusEvent, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, useMemo, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addSearchTag, dropSearchTag, selectPostsTags } from './postsSlice';
+import {
+	addSearchTag,
+	dropSearchTag,
+	selectPostsTags,
+	setSearchTerm,
+} from './postsSlice';
 
 export default function PostSearch() {
 	const dispatch = useAppDispatch();
-	const { searchTags } = useAppSelector((state) => state.posts);
+	const { searchTags, searchTerm } = useAppSelector((state) => state.posts);
 	const postsTags = useAppSelector(selectPostsTags);
 	const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 
@@ -30,6 +36,14 @@ export default function PostSearch() {
 
 	const handleSearchFocus = (isFocused: boolean) => () => {
 		setDropdownOpen(isFocused);
+	};
+
+	const handleSearchInput = (event: ChangeEvent<HTMLInputElement>) => {
+		dispatch(setSearchTerm(event.target.value));
+	};
+
+	const handleSearchClear = () => {
+		dispatch(setSearchTerm(''));
 	};
 
 	const handleChipClick = (tag: string) => () => {
@@ -46,6 +60,8 @@ export default function PostSearch() {
 				variant="outlined"
 				placeholder="Search posts"
 				onClick={handleSearchFocus(true)}
+				onChange={handleSearchInput}
+				value={searchTerm}
 				InputProps={{
 					startAdornment: (
 						<InputAdornment position="start">
@@ -58,21 +74,23 @@ export default function PostSearch() {
 						</InputAdornment>
 					),
 					endAdornment: (
-						<InputAdornment position="end">
-							<IconButton>
-								<Clear />
-							</IconButton>
-						</InputAdornment>
+						<Zoom in={!!searchTerm}>
+							<InputAdornment position="end">
+								<IconButton onClick={handleSearchClear}>
+									<Clear />
+								</IconButton>
+							</InputAdornment>
+						</Zoom>
 					),
 				}}
 			/>
 			<Collapse in={dropdownOpen}>
 				<Card sx={{ mt: 1 }}>
 					<CardHeader
-						subheader="Suggestions"
+						subheader="Tags"
 						action={
 							<IconButton onClick={handleSearchFocus(false)}>
-								<Close />
+								<UnfoldLess />
 							</IconButton>
 						}
 					/>
