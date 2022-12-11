@@ -64,7 +64,6 @@ export default function CommentReply({
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Comment reply</DialogTitle>
 			<DialogContent>
 				<Stack direction="column" spacing={2}>
 					<CommentStrip comment={comment} canReply={false} />

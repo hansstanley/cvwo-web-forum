@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {
@@ -7,15 +7,23 @@ import {
 	CssBaseline,
 	ThemeProvider,
 	Toolbar,
+	useMediaQuery,
 } from '@mui/material';
 import { MainAppBar, MainFrame } from './components';
 import { PostAddFab } from './features/posts';
-import { useAppSelector } from './app/hooks';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { setMobile } from './features/theme/themeSlice';
 
 function App() {
+	const dispatch = useAppDispatch();
 	const { mode } = useAppSelector((state) => state.theme);
 
 	const theme = useMemo(() => createTheme({ palette: { mode } }), [mode]);
+
+	const mobile = useMediaQuery(theme.breakpoints.down('md'));
+	useEffect(() => {
+		dispatch(setMobile(mobile));
+	}, [mobile]);
 
 	return (
 		<ThemeProvider theme={theme}>

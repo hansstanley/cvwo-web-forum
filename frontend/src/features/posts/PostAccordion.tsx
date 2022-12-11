@@ -1,4 +1,4 @@
-import { Delete, Edit, ExpandMore } from '@mui/icons-material';
+import { Close, Delete, Edit, ExpandMore, Reply } from '@mui/icons-material';
 import {
 	Accordion,
 	AccordionActions,
@@ -7,18 +7,27 @@ import {
 	Box,
 	Button,
 	Chip,
+	Dialog,
+	DialogContent,
+	DialogTitle,
 	Divider,
 	IconButton,
+	Slide,
 	Stack,
 	Tooltip,
 	Typography,
+	useMediaQuery,
+	useTheme,
 } from '@mui/material';
-import { SyntheticEvent, useState } from 'react';
+import { TransitionProps } from '@mui/material/transitions';
+import { forwardRef, ReactElement, Ref, SyntheticEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types';
+import { selectMobile } from '../theme/themeSlice';
 import PostAddDialog from './PostAddDialog';
 
 import PostDeleteDialog from './PostDeleteDialog';
+import PostDetail from './PostDetail';
 import { addSearchTag, setCurrPostId, setPosts } from './postsSlice';
 
 export interface PostAccordionProps {
@@ -28,8 +37,11 @@ export interface PostAccordionProps {
 export default function PostAccordion({ post }: PostAccordionProps) {
 	const dispatch = useAppDispatch();
 	const { currPost } = useAppSelector((state) => state.posts);
-	const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+	const [commentOpen, setCommentOpen] = useState(false);
 	const [updateOpen, setUpdateOpen] = useState<boolean>(false);
+	const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+
+	const isMobile = useAppSelector(selectMobile);
 
 	const handleChange =
 		(postId: number) => (event: SyntheticEvent, isExpanded: boolean) => {
@@ -38,6 +50,10 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 
 	const handleChipClick = (tag: string) => () => {
 		dispatch(addSearchTag(tag));
+	};
+
+	const toggleCommentOpen = (open: boolean) => () => {
+		setCommentOpen(open);
 	};
 
 	const toggleUpdateOpen = (open: boolean) => () => {
@@ -70,7 +86,10 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 				</Stack>
 			</AccordionSummary>
 			<AccordionDetails>
-				<Stack direction="column" spacing={1}>
+				<Stack
+					direction="column"
+					spacing={1}
+					divider={<Divider orientation="horizontal" />}>
 					{(post.tags ?? []).length > 0 ? (
 						<Stack direction="row" spacing={1}>
 							{post.tags?.map((tag) => (
@@ -82,6 +101,13 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 				</Stack>
 			</AccordionDetails>
 			<AccordionActions>
+				{isMobile ? (
+					<Tooltip title="View comments">
+						<IconButton size="small" onClick={toggleCommentOpen(true)}>
+							<Reply fontSize="inherit" />
+						</IconButton>
+					</Tooltip>
+				) : null}
 				<Tooltip title="Edit post">
 					<IconButton size="small" onClick={toggleUpdateOpen(true)}>
 						<Edit fontSize="inherit" />
@@ -103,6 +129,27 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 				onClose={toggleDeleteOpen(false)}
 				post={post}
 			/>
+			{isMobile ? (
+				<Dialog
+					open={commentOpen}
+					onClose={toggleCommentOpen(false)}
+					fullScreen
+					TransitionComponent={Transition}>
+					<IconButton
+						onClick={toggleCommentOpen(false)}
+						sx={{ position: 'absolute', top: 8, right: 8 }}>
+						<Close />
+					</IconButton>
+					<PostDetail />
+				</Dialog>
+			) : null}
 		</Accordion>
 	);
 }
+
+const Transition = forwardRef(function Transition(
+	props: TransitionProps & { children: ReactElement<any, any> },
+	ref: Ref<unknown>,
+) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});

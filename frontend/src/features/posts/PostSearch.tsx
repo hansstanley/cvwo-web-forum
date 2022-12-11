@@ -85,7 +85,7 @@ export default function PostSearch() {
 				}}
 			/>
 			<Collapse in={dropdownOpen}>
-				<Card sx={{ mt: 1 }}>
+				<Card sx={{ mt: 2 }}>
 					<CardHeader
 						subheader="Tags"
 						action={

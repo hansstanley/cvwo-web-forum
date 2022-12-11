@@ -42,16 +42,16 @@ export default function PostAddDialog({
 	const [description, setDescription] = useState<string>(
 		postToEdit?.description ?? '',
 	);
-	const [newTag, setNewTag] = useState<string>('');
 	const [activeTags, setActiveTags] = useState<string[]>(
 		postToEdit?.tags ?? [],
 	);
+	const [newTag, setNewTag] = useState<string>('');
 
 	const handleClose = () => {
 		onClose();
-		setTitle('');
-		setDescription('');
-		setActiveTags([]);
+		setTitle(postToEdit?.title ?? '');
+		setDescription(postToEdit?.description ?? '');
+		setActiveTags(postToEdit?.tags ?? []);
 	};
 
 	const handlePost = async () => {

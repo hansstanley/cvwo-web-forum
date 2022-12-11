@@ -74,14 +74,24 @@ export const selectFilteredPosts: (state: RootState) => ForumPost[] = (
 			.map((t) => t.toLowerCase()) ?? [];
 	const filterString = (s: string) =>
 		terms.reduce((prev, curr) => prev || s.toLowerCase().includes(curr), false);
-	return terms.length === 0
-		? state.posts.posts
-		: state.posts.posts.filter(
-				(post) =>
-					filterString(post.title) ||
-					filterString(post.description) ||
-					filterString(post.createdBy?.username ?? ''),
-		  );
+	const filterTag = (post: ForumPost) =>
+		state.posts.searchTags.reduce(
+			(prev, curr) => prev || (post.tags?.includes(curr) ?? false),
+			false,
+		);
+	const fileredBySearch =
+		terms.length === 0
+			? state.posts.posts
+			: state.posts.posts.filter(
+					(post) =>
+						filterString(post.title) ||
+						filterString(post.description) ||
+						filterString(post.createdBy?.username ?? ''),
+			  );
+	const filteredByTags = state.posts.posts.filter(
+		(post) => state.posts.searchTags.length === 0 || filterTag(post),
+	);
+	return filteredByTags;
 };
 
 export default postsSlice.reducer;
