@@ -1,4 +1,4 @@
-import { Delete, Edit, MoreHoriz, Reply } from '@mui/icons-material';
+import { Delete, Edit, MoreHoriz, MoreVert, Reply } from '@mui/icons-material';
 import {
 	Box,
 	ButtonGroup,
@@ -15,6 +15,7 @@ import { Stack } from '@mui/system';
 import { useState } from 'react';
 import { UpDownVoter } from '../../components';
 import { ForumComment } from '../../types';
+import CommentEditDialog from './CommentEditDialog';
 import CommentList from './CommentList';
 import CommentReply from './CommentReply';
 
@@ -29,6 +30,7 @@ export default function CommentStrip({
 }: CommentStripProps) {
 	const [subOpen, setSubOpen] = useState(false);
 	const [replyOpen, setReplyOpen] = useState(false);
+	const [editOpen, setEditOpen] = useState(false);
 
 	const toggleSubOpen = () => {
 		setSubOpen(!subOpen);
@@ -36,6 +38,10 @@ export default function CommentStrip({
 
 	const toggleReplyOpen = (open: boolean) => () => {
 		setReplyOpen(open);
+	};
+
+	const toggleEditOpen = (open: boolean) => () => {
+		setEditOpen(open);
 	};
 
 	const header = (
@@ -52,11 +58,8 @@ export default function CommentStrip({
 			<IconButton size="small" onClick={toggleReplyOpen(true)}>
 				<Reply fontSize="inherit" />
 			</IconButton>
-			<IconButton size="small">
-				<Edit fontSize="inherit" />
-			</IconButton>
-			<IconButton size="small">
-				<Delete fontSize="inherit" />
+			<IconButton size="small" onClick={toggleEditOpen(true)}>
+				<MoreVert fontSize="inherit" />
 			</IconButton>
 		</Stack>
 	) : null;
@@ -81,11 +84,12 @@ export default function CommentStrip({
 							) : null}
 						</Stack>
 					</ListItemButton>
-					{comment.subComments ? (
-						<Collapse in={subOpen} sx={{ ml: 2 }}>
-							<CommentList comments={comment.subComments} canReply={canReply} />
-						</Collapse>
-					) : null}
+					<Collapse in={subOpen} sx={{ ml: 2 }}>
+						<CommentList
+							comments={comment.subComments ?? []}
+							canReply={canReply}
+						/>
+					</Collapse>
 				</Stack>
 				{buttons}
 			</Stack>
@@ -96,6 +100,11 @@ export default function CommentStrip({
 					comment={comment}
 				/>
 			) : null}
+			<CommentEditDialog
+				open={editOpen}
+				onClose={toggleEditOpen(false)}
+				comment={comment}
+			/>
 		</ListItem>
 	);
 }

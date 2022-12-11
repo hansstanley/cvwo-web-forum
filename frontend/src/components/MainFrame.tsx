@@ -1,5 +1,4 @@
-import { Box, Divider, Paper } from '@mui/material';
-import { Stack } from '@mui/system';
+import { Box, Divider, Paper, Stack } from '@mui/material';
 import {
 	PostAccordingList,
 	PostAccordion,
@@ -13,12 +12,12 @@ export default function MainFrame() {
 		<Stack
 			direction="row"
 			divider={<Divider orientation="vertical" flexItem />}>
-			<Paper sx={{ flex: 1, maxHeight: '80vh', overflow: 'auto', p: 2, m: 2 }}>
+			<Box sx={{ flex: 1, maxHeight: '80vh', overflow: 'auto', p: 2 }}>
 				<Stack direction="column" spacing={2}>
 					<PostSearch />
 					<PostAccordingList />
 				</Stack>
-			</Paper>
+			</Box>
 			<PostDetail />
 		</Stack>
 	);

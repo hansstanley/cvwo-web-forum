@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { ForumPost } from '../../types';
 import { deletePost } from './postApi';
-import { setPosts } from './postsSlice';
+import { setCurrPostId, setPosts } from './postsSlice';
 
 export interface PostDeleteDialogProps {
 	open: boolean;
@@ -32,6 +32,7 @@ export default function PostDeleteDialog({
 		try {
 			const posts = await deletePost(post);
 			dispatch(setPosts(posts));
+			dispatch(setCurrPostId(-1));
 		} catch (e) {
 		} finally {
 			setLoading(false);

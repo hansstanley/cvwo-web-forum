@@ -10,9 +10,12 @@ export type ForumPost = {
 };
 
 export type ForumComment = {
+	commentId: number;
+	postId: number;
 	content: string;
 	upVoteCount: number;
 	downVoteCount: number;
+	parentCommentId?: number;
 	subComments?: ForumComment[];
 	createdAt: string;
 	createdBy?: User;

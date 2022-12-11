@@ -1,4 +1,4 @@
-import { List, ListItem } from '@mui/material';
+import { Divider, List, ListItem, Typography } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
 import { ForumComment } from '../../types';
 import CommentStrip from './CommentStrip';
@@ -12,11 +12,15 @@ export default function CommentList({
 	comments,
 	canReply = false,
 }: CommentListProps) {
-	return (
+	return comments.length > 0 ? (
 		<List>
-			{comments?.map((c) => (
+			{comments.map((c) => (
 				<CommentStrip comment={c} canReply={canReply} />
 			))}
 		</List>
+	) : (
+		<Divider>
+			<Typography variant="caption">No comments to show</Typography>
+		</Divider>
 	);
 }

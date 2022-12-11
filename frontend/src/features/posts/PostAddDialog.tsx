@@ -109,6 +109,7 @@ export default function PostAddDialog({
 			<DialogContent>
 				<Stack direction="column" spacing={1}>
 					<TextField
+						margin="dense"
 						fullWidth
 						required
 						label="Title"
@@ -116,11 +117,11 @@ export default function PostAddDialog({
 						onChange={handleTitleChange}
 					/>
 					<TextField
+						margin="dense"
 						fullWidth
 						required
 						multiline
-						maxRows={4}
-						rows={2}
+						rows={4}
 						label="Description"
 						value={description}
 						onChange={handleDescriptionChange}

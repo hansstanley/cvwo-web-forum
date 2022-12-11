@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
 import { ForumComment } from '../../types';
 
 interface CommentsState {
@@ -6,121 +7,40 @@ interface CommentsState {
 }
 
 const initialState: CommentsState = {
-	comments: [
-		{
-			content:
-				'First comment that is really really really really really really really really really really long',
-			upVoteCount: 10,
-			downVoteCount: 1,
-			createdAt: '2022-01-01 01:01:01',
-			subComments: [
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-					subComments: [
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-						{
-							content: 'Third comment!',
-							upVoteCount: 15,
-							downVoteCount: 3,
-							createdAt: '2022-01-01 01:01:01',
-						},
-					],
-				},
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-				},
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-				},
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-				},
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-				},
-				{
-					content: 'Third comment!',
-					upVoteCount: 15,
-					downVoteCount: 3,
-					createdAt: '2022-01-01 01:01:01',
-				},
-			],
-		},
-		{
-			content: 'Second comment!',
-			upVoteCount: 5,
-			downVoteCount: 2,
-			createdAt: '2022-01-01 01:01:01',
-		},
-		{
-			content: 'Third comment!',
-			upVoteCount: 15,
-			downVoteCount: 3,
-			createdAt: '2022-01-01 01:01:01',
-		},
-		{
-			content: 'Third comment!',
-			upVoteCount: 15,
-			downVoteCount: 3,
-			createdAt: '2022-01-01 01:01:01',
-		},
-		{
-			content: 'Third comment!',
-			upVoteCount: 15,
-			downVoteCount: 3,
-			createdAt: '2022-01-01 01:01:01',
-		},
-	],
+	comments: [],
 };
 
 const commentsSlice = createSlice({
 	name: 'comments',
 	initialState,
-	reducers: {},
+	reducers: {
+		setComments: (state, action: PayloadAction<ForumComment[]>) => {
+			state.comments = action.payload;
+		},
+	},
 });
+
+export const { setComments } = commentsSlice.actions;
+
+export const selectCurrPostComments: (state: RootState) => ForumComment[] = (
+	state,
+) => {
+	const postComments = state.comments.comments.filter(
+		(c) => c.postId === state.posts.currPost?.postId,
+	);
+	const rootComments: Map<number, ForumComment> = new Map(
+		postComments.map((c) => [c.commentId, { ...c }]),
+	);
+	for (let comment of postComments) {
+		if (comment.parentCommentId) {
+			const parent = rootComments.get(comment.parentCommentId);
+			if (parent) {
+				parent.subComments = parent.subComments ?? [];
+				parent.subComments.push(comment);
+			}
+		}
+	}
+	return Array.from(rootComments.values()).filter((c) => !c.parentCommentId);
+};
 
 export default commentsSlice.reducer;

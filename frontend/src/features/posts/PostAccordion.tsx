@@ -10,6 +10,7 @@ import {
 	Divider,
 	IconButton,
 	Stack,
+	Tooltip,
 	Typography,
 } from '@mui/material';
 import { SyntheticEvent, useState } from 'react';
@@ -81,12 +82,16 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 				</Stack>
 			</AccordionDetails>
 			<AccordionActions>
-				<IconButton size="small" onClick={toggleUpdateOpen(true)}>
-					<Edit fontSize="inherit" />
-				</IconButton>
-				<IconButton size="small" onClick={toggleDeleteOpen(true)}>
-					<Delete fontSize="inherit" />
-				</IconButton>
+				<Tooltip title="Edit post">
+					<IconButton size="small" onClick={toggleUpdateOpen(true)}>
+						<Edit fontSize="inherit" />
+					</IconButton>
+				</Tooltip>
+				<Tooltip title="Delete post">
+					<IconButton size="small" onClick={toggleDeleteOpen(true)}>
+						<Delete fontSize="inherit" />
+					</IconButton>
+				</Tooltip>
 			</AccordionActions>
 			<PostAddDialog
 				open={updateOpen}
