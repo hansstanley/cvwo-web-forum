@@ -13,10 +13,14 @@ import { MainAppBar, MainFrame } from './components';
 import { PostAddFab } from './features/posts';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setMobile } from './features/theme/themeSlice';
+import { setAuth } from './app/utils';
+import { initAuth } from './features/user/userSlice';
+import { fetchUserByUsername } from './features/user/userApi';
 
 function App() {
 	const dispatch = useAppDispatch();
 	const { mode } = useAppSelector((state) => state.theme);
+	const { auth, status } = useAppSelector((state) => state.user);
 
 	const theme = useMemo(() => createTheme({ palette: { mode } }), [mode]);
 
@@ -24,6 +28,19 @@ function App() {
 	useEffect(() => {
 		dispatch(setMobile(mobile));
 	}, [dispatch, mobile]);
+
+	useEffect(() => {
+		if (auth) {
+			setAuth(auth);
+			dispatch(fetchUserByUsername(auth.username));
+		}
+	}, [dispatch, auth]);
+
+	useEffect(() => {
+		if (status.status === 'idle') {
+			dispatch(initAuth());
+		}
+	}, [dispatch, status]);
 
 	return (
 		<ThemeProvider theme={theme}>

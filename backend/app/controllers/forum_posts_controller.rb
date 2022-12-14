@@ -1,5 +1,6 @@
 # Controller for forum posts
 class ForumPostsController < ApplicationController
+  before_action :authenticate_user, except: %i[index create]
   before_action :user
   before_action :set_forum_post, only: %i[show update destroy]
 
@@ -27,14 +28,22 @@ class ForumPostsController < ApplicationController
 
   # PATCH /forum_posts/:id
   def update
-    @forum_post.update(post_params)
-    render json: @forum_post
+    if @current_user.id == @forum_post.user_id
+      @forum_post.update(post_params)
+      render json: @forum_post
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
   end
 
   # DELETE /forum_posts/:id
   def destroy
-    @forum_post.destroy
-    render json: @forum_post
+    if @current_user.id == @forum_post.user_id
+      @forum_post.destroy
+      render json: @forum_post
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
   end
 
   private

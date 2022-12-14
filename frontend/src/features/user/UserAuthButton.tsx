@@ -1,5 +1,5 @@
 import { Button, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import UserLoginDialog from './UserLoginDialog';
 import UserLogoutDialog from './UserLogoutDialog';
@@ -10,9 +10,7 @@ export default function UserAuthButton() {
 	const [loginOpen, setLoginOpen] = useState(false);
 	const [logoutOpen, setLogoutOpen] = useState(false);
 
-	const toggleLoginOpen = (open: boolean) => () => {
-		setLoginOpen(open);
-	};
+	const toggleLoginOpen = (open: boolean) => () => setLoginOpen(open);
 
 	const toggleLogoutOpen = (open: boolean) => () => {
 		setLogoutOpen(open);

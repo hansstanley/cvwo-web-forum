@@ -31,7 +31,7 @@ import {
 	useState,
 } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { ForumPost } from '../../types';
+import { ForumPost } from '../../types/post';
 import { selectMobile } from '../theme/themeSlice';
 import { selectLoginSuccess } from '../user/userSlice';
 import PostAddDialog from './PostAddDialog';

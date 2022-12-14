@@ -2,6 +2,7 @@ import { Close } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
+	Box,
 	Button,
 	Collapse,
 	Dialog,
@@ -14,9 +15,16 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import {
+	ChangeEvent,
+	FormEvent,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { handleUserLogin } from './userApi';
+import { Auth } from '../../types/user';
+import { handleUserLogin, handleUserRegister } from './userApi';
 
 export interface UserLoginDialogProps {
 	open: boolean;
@@ -29,19 +37,35 @@ export default function UserLoginDialog({
 }: UserLoginDialogProps) {
 	const dispatch = useAppDispatch();
 	const { status } = useAppSelector((state) => state.user);
-	const [username, setUsername] = useState<string>('');
-
-	const handleLogin = () => {
-		dispatch(handleUserLogin(username));
-	};
+	const [register, setRegister] = useState(false);
+	const [auth, setAuth] = useState<Auth>({
+		username: '',
+		password: '',
+	});
 
 	const handleClose = useCallback(() => {
 		onClose();
-		setUsername('');
-	}, [onClose]);
+		setAuth({ username: '', password: '' });
+		setRegister(false);
+	}, [dispatch, onClose]);
 
-	const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setUsername(event.target.value);
+	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setAuth({
+			...auth,
+			[event.target.id]: event.target.value,
+		});
+	};
+
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		if (register) {
+			await dispatch(handleUserRegister(auth));
+		}
+		await dispatch(handleUserLogin(auth));
+	};
+
+	const handleRegisterToggle = () => {
+		setRegister(!register);
 	};
 
 	useEffect(() => {
@@ -50,37 +74,69 @@ export default function UserLoginDialog({
 		}
 	}, [status, handleClose]);
 
+	const authForm = (
+		<Stack direction="column">
+			<TextField
+				autoFocus
+				required
+				id="username"
+				type="text"
+				label="Username"
+				value={auth.username}
+				variant="outlined"
+				onChange={handleChange}
+				margin="dense"
+			/>
+			<TextField
+				required
+				id="password"
+				type="password"
+				label="Password"
+				margin="dense"
+				value={auth.password}
+				onChange={handleChange}
+			/>
+			<Collapse in={register}>
+				<TextField
+					id="password_confirmation"
+					type="password"
+					label="Confirm password"
+					margin="dense"
+					fullWidth
+					required={register}
+					value={auth.password_confirmation ?? ''}
+					onChange={handleChange}
+				/>
+			</Collapse>
+		</Stack>
+	);
+
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Nice to meet you!</DialogTitle>
-			<DialogContent>
-				<Stack direction="column" spacing={2}>
-					<DialogContentText>
-						Login with your username here to contribute to the forum.
-					</DialogContentText>
-					<TextField
-						autoFocus
-						required
-						id="username"
-						type="text"
-						error={status.status === 'failure'}
-						label="Username"
-						value={username}
-						helperText={status.errorMessage}
-						variant="outlined"
-						onChange={handleUsernameChange}
-					/>
-				</Stack>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleClose}>Cancel</Button>
-				<LoadingButton
-					loading={status.status === 'loading'}
-					variant="contained"
-					onClick={handleLogin}>
-					Login
-				</LoadingButton>
-			</DialogActions>
+			<Box component="form" onSubmit={handleSubmit}>
+				<DialogTitle>
+					{register ? 'Nice to meet you!' : 'Welcome back!'}
+				</DialogTitle>
+				<DialogContent>
+					{authForm}
+					<Button onClick={handleRegisterToggle} sx={{ mt: 1 }}>
+						{register ? 'Already' : "Don't"} have an account?
+					</Button>
+					<Collapse in={status.status === 'failure'}>
+						<Alert severity="error">{status.errorMessage}</Alert>
+					</Collapse>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose}>Cancel</Button>
+					<LoadingButton
+						id="submit"
+						type="submit"
+						loading={status.status === 'loading'}
+						variant="contained">
+						{register ? 'Register' : 'Login'}
+					</LoadingButton>
+				</DialogActions>
+			</Box>
 		</Dialog>
 	);
 }

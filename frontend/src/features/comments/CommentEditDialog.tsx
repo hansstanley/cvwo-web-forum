@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { deleteComment, updateComment } from './commentsApi';
 import { setComments } from './commentsSlice';

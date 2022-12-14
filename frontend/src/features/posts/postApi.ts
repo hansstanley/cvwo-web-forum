@@ -1,27 +1,33 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import { client } from '../../api/client';
-import { ForumPost } from '../../types';
+import { RootState } from '../../app/store';
+import { ForumPost } from '../../types/post';
+import { selectClient } from '../api/apiSlice';
 
 const BASE_ROUTE = 'forum_posts';
 
-export const fetchPosts = createAsyncThunk('posts/all', async () => {
-	try {
-		const response = await client.get<ForumPost[]>(`${BASE_ROUTE}`);
-		return response.data;
-	} catch (err) {
-		// TODO: handle fetch posts errors
-		throw err;
-	}
-});
+export const fetchPosts = createAsyncThunk(
+	'posts/all',
+	async (_, { getState }) => {
+		try {
+			const client = selectClient(getState() as RootState);
+			const response = await client.get<ForumPost[]>(`${BASE_ROUTE}`);
+			return response.data;
+		} catch (err) {
+			// TODO: handle fetch posts errors
+			throw err;
+		}
+	},
+);
 
 export const createPost = createAsyncThunk(
 	'posts/create',
-	async (post: ForumPost) => {
+	async (post: ForumPost, { getState }) => {
 		if (!post.user) {
 			throw new Error('User is needed for post creation.');
 		}
 		try {
+			const client = selectClient(getState() as RootState);
 			const response = await client.post<ForumPost>(
 				`users/${post.user.id}/${BASE_ROUTE}`,
 				post,
@@ -44,11 +50,12 @@ export const createPost = createAsyncThunk(
 
 export const updatePost = createAsyncThunk(
 	'posts/update',
-	async (post: ForumPost) => {
+	async (post: ForumPost, { getState }) => {
 		if (post.id === undefined) {
 			throw new Error('Post id is needed for update.');
 		}
 		try {
+			const client = selectClient(getState() as RootState);
 			const response = await client.patch<ForumPost>(
 				`${BASE_ROUTE}/${post.id}`,
 				post,
@@ -63,11 +70,12 @@ export const updatePost = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
 	'posts/delete',
-	async (post: ForumPost) => {
+	async (post: ForumPost, { getState }) => {
 		if (post.id === undefined) {
 			throw new Error('Post id is need for deletion.');
 		}
 		try {
+			const client = selectClient(getState() as RootState);
 			const response = await client.delete<ForumPost>(
 				`${BASE_ROUTE}/${post.id}`,
 			);

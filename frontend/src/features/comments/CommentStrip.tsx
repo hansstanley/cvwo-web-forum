@@ -15,7 +15,7 @@ import { Stack } from '@mui/system';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { UpDownVoter } from '../../components';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import { selectLoginSuccess } from '../user/userSlice';
 import CommentEditDialog from './CommentEditDialog';
 import CommentList from './CommentList';

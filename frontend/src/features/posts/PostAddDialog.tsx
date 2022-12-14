@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { ForumPost } from '../../types';
+import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, updatePost } from './postApi';
 import { selectPostsTags, setPosts } from './postsSlice';

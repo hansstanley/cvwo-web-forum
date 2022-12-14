@@ -1,6 +1,6 @@
 import { Divider, List, ListItem, Typography } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import CommentStrip from './CommentStrip';
 
 export interface CommentListProps {

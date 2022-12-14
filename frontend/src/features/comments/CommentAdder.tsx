@@ -9,7 +9,7 @@ import {
 import { Stack } from '@mui/system';
 import { ChangeEvent, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
 

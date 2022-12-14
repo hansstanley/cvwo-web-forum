@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
 import { setComments } from './commentsSlice';

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ForumPost } from '../../types';
+import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, deletePost, fetchPosts, updatePost } from './postApi';
 

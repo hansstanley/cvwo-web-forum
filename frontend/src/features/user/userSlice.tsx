@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { User } from '../../types';
+import { AuthResponse, User } from '../../types/user';
 import { FetchStatus } from '../../types/common';
-import { handleUserLogin } from './userApi';
+import { fetchUserByUsername, handleUserLogin } from './userApi';
+import { getAuth, setAuth } from '../../app/utils';
 
 interface UserState {
 	status: FetchStatus;
 	userInfo?: User;
-	userToken?: string;
+	auth?: AuthResponse;
 }
 
 const initialState: UserState = {
@@ -18,20 +19,36 @@ const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
+		initAuth: (state) => {
+			state.auth = getAuth();
+		},
 		onLogout: (state) => {
+			setAuth(undefined);
 			return { status: { status: 'idle' } };
 		},
 	},
 	extraReducers(builder) {
 		builder
 			.addCase(handleUserLogin.pending, (state, action) => {
-				state.status = { status: 'loading', errorMessage: undefined };
+				return { status: { status: 'loading' } };
 			})
 			.addCase(handleUserLogin.fulfilled, (state, action) => {
-				state.status = { status: 'success', errorMessage: undefined };
-				state.userInfo = action.payload;
+				return { status: { status: 'loading' }, auth: action.payload };
 			})
 			.addCase(handleUserLogin.rejected, (state, action) => {
+				return {
+					status: {
+						status: 'failure',
+						errorMessage: action.error.message,
+					},
+				};
+			});
+		builder
+			.addCase(fetchUserByUsername.fulfilled, (state, action) => {
+				state.status = { status: 'success' };
+				state.userInfo = action.payload;
+			})
+			.addCase(fetchUserByUsername.rejected, (state, action) => {
 				state.status = {
 					status: 'failure',
 					errorMessage: action.error.message,
@@ -41,7 +58,7 @@ const userSlice = createSlice({
 	},
 });
 
-export const { onLogout } = userSlice.actions;
+export const { initAuth, onLogout } = userSlice.actions;
 
 export const selectLoginSuccess: (state: RootState) => boolean = (state) =>
 	state.user.status.status === 'success';

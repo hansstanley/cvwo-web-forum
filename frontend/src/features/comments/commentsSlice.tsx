@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ForumComment } from '../../types';
+import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import {
 	createComment,
@@ -37,7 +37,6 @@ const commentsSlice = createSlice({
 				state.comments = action.payload;
 			})
 			.addCase(fetchCommentsByPost.rejected, (state, action) => {
-				console.log(action.error);
 				state.fetchStatus = {
 					status: 'failure',
 					errorMessage: action.error.message,

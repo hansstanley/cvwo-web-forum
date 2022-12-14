@@ -1,5 +1,6 @@
 # Controller for forum comments
 class ForumCommentsController < ApplicationController
+  before_action :authenticate_user, except: %i[index show]
   before_action :user
   before_action :forum_post, :parent_comment
   before_action :set_forum_comment, only: %i[show update destroy]
@@ -31,14 +32,22 @@ class ForumCommentsController < ApplicationController
 
   # PATCH /forum_comments/:id
   def update
-    @forum_comment.update(comment_params)
-    render json: @forum_comment
+    if @current_user.id == @forum_comment.user_id
+      @forum_comment.update(comment_params)
+      render json: @forum_comment
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
   end
 
   # DELETE /forum_comments/:id
   def destroy
-    @forum_comment.update({ deleted: true })
-    render json: @forum_comment
+    if @current_user.id == @forum_comment.user_id
+      @forum_comment.update({ deleted: true })
+      render json: @forum_comment
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
   end
 
   private

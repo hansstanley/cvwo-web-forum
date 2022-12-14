@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { ForumPost } from '../../types';
+import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { deletePost } from './postApi';
 import { setCurrPostId, setPosts } from './postsSlice';
