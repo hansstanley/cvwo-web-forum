@@ -1,5 +1,6 @@
 # Controller for users
 class UsersController < ApplicationController
+  before_action :authenticate_user, except: :create
   before_action :set_user, only: %i[show update destroy]
 
   def index
@@ -27,7 +28,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/:id
   def delete
-    @user.destroy
+    @user.update({ deleted: true })
     render json: @user
   end
 
@@ -42,6 +43,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username, :password)
+    params.permit(:username, :password, :password_confirmation)
   end
 end
