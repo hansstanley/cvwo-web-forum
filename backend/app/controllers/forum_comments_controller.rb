@@ -37,7 +37,7 @@ class ForumCommentsController < ApplicationController
 
   # DELETE /forum_comments/:id
   def destroy
-    @forum_comment.destroy
+    @forum_comment.update({ deleted: true })
     render json: @forum_comment
   end
 

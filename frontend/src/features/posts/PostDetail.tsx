@@ -1,4 +1,5 @@
 import {
+	Box,
 	Collapse,
 	Divider,
 	LinearProgress,
@@ -29,24 +30,32 @@ export default function PostDetail() {
 	);
 
 	return (
-		<Stack direction="column" spacing={2} p={2}>
+		<Stack
+			direction="column"
+			spacing={2}
+			p={2}
+			divider={<Divider orientation="horizontal" />}>
 			<Typography variant="subtitle1">Comments</Typography>
-			<Divider orientation="horizontal" />
-			{currPost ? null : (
-				<Typography>Select a post to view comments.</Typography>
-			)}
-			<Collapse in={!!currPost}>
-				<Stack direction="column" spacing={2}>
-					<CommentAdder />
-					{rootComments.length > 0 ? (
-						<CommentList comments={rootComments} canReply />
-					) : (
-						<Typography variant="body2" fontStyle="italic">
-							It's awfully quiet here...
-						</Typography>
-					)}
-				</Stack>
-			</Collapse>
+			<Box>
+				<Collapse in={!currPost}>
+					<Typography>Select a post to view comments.</Typography>
+				</Collapse>
+				<Collapse in={!!currPost}>
+					<Stack direction="column" spacing={2}>
+						<CommentAdder />
+						<Box>
+							<Collapse in={rootComments.length === 0}>
+								<Typography variant="body2" fontStyle="italic">
+									It's awfully quiet here...
+								</Typography>
+							</Collapse>
+							<Collapse in={rootComments.length > 0}>
+								<CommentList comments={rootComments} canReply />
+							</Collapse>
+						</Box>
+					</Stack>
+				</Collapse>
+			</Box>
 		</Stack>
 	);
 }

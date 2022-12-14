@@ -10,12 +10,14 @@ export interface ForumPost {
 	updated_at?: string;
 }
 
-export type ForumComment = {
+export interface ForumComment {
 	id?: number;
 	content: string;
 	forum_post_id?: number;
 	parent_id?: number;
 	user?: User;
 	forum_comments?: ForumComment[];
+	created_at?: string;
 	updated_at?: string;
-};
+	deleted?: boolean;
+}

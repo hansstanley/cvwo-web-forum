@@ -53,8 +53,8 @@ const commentsSlice = createSlice({
 				);
 			})
 			.addCase(deleteComment.fulfilled, (state, action) => {
-				state.comments = state.comments.filter(
-					(c) => c.id !== action.payload.id,
+				state.comments = state.comments.map((c) =>
+					c.id === action.payload.id ? action.payload : c,
 				);
 			});
 	},
@@ -67,7 +67,7 @@ export const selectCommentsSortedByTimestamp: (
 ) => ForumComment[] = (state) => {
 	const sorted = [...state.comments.comments];
 	sorted.sort((c1, c2) =>
-		('' + c2.updated_at).localeCompare('' + c1.updated_at),
+		('' + c2.created_at).localeCompare('' + c1.created_at),
 	);
 	return sorted;
 };

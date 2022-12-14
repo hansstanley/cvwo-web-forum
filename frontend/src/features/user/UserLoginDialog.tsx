@@ -51,7 +51,7 @@ export default function UserLoginDialog({
 	}, [status, handleClose]);
 
 	return (
-		<Dialog open={open} onClose={handleClose}>
+		<Dialog open={open} onClose={handleClose} fullWidth>
 			<DialogTitle>Nice to meet you!</DialogTitle>
 			<DialogContent>
 				<Stack direction="column" spacing={2}>

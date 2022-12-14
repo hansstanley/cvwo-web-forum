@@ -30,10 +30,7 @@ function App() {
 			<Box sx={{ display: 'flex' }}>
 				<CssBaseline />
 				<MainAppBar />
-				<Box component="main" sx={{ flex: 1 }}>
-					<Toolbar />
-					<MainFrame />
-				</Box>
+				<MainFrame />
 				<PostAddFab />
 			</Box>
 		</ThemeProvider>

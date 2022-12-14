@@ -20,7 +20,6 @@ import { selectLoginSuccess } from '../user/userSlice';
 import CommentEditDialog from './CommentEditDialog';
 import CommentList from './CommentList';
 import CommentReply from './CommentReply';
-import { fetchCommentsByComment, fetchCommentsByPost } from './commentsApi';
 import { selectCommentsSortedByTimestamp } from './commentsSlice';
 
 export interface CommentStripProps {
@@ -32,7 +31,6 @@ export default function CommentStrip({
 	comment,
 	canReply = false,
 }: CommentStripProps) {
-	const dispatch = useAppDispatch();
 	const comments = useAppSelector(selectCommentsSortedByTimestamp);
 	const loginSuccess = useAppSelector(selectLoginSuccess);
 	const { userInfo } = useAppSelector((state) => state.user);
@@ -46,12 +44,12 @@ export default function CommentStrip({
 	);
 
 	const showReply = useMemo(
-		() => loginSuccess && canReply,
-		[loginSuccess, canReply],
+		() => loginSuccess && canReply && !comment.deleted,
+		[loginSuccess, canReply, comment],
 	);
 
 	const showEdit = useMemo(
-		() => loginSuccess && userInfo?.id === comment.user?.id,
+		() => loginSuccess && userInfo?.id === comment.user?.id && !comment.deleted,
 		[loginSuccess, userInfo, comment],
 	);
 
@@ -100,8 +98,14 @@ export default function CommentStrip({
 						onClick={toggleSubOpen}
 						sx={{ flex: 1, borderRadius: 1 }}>
 						<Stack flex={1} direction="column" spacing={1}>
-							{header}
-							<Typography variant="body1">{comment.content}</Typography>
+							{comment.deleted ? (
+								<DeletedStrip />
+							) : (
+								<>
+									{header}
+									<Typography variant="body1">{comment.content}</Typography>
+								</>
+							)}
 							{comment.forum_comments?.length ? (
 								<MoreHoriz
 									fontSize="small"
@@ -132,5 +136,18 @@ export default function CommentStrip({
 				/>
 			) : null}
 		</ListItem>
+	);
+}
+
+function DeletedStrip() {
+	return (
+		<Stack flex={1} direction="column" spacing={1}>
+			<Typography fontStyle="italic" fontWeight="bold" color="GrayText">
+				Username hidden
+			</Typography>
+			<Typography fontStyle="italic" color="GrayText">
+				This comment has been deleted.
+			</Typography>
+		</Stack>
 	);
 }
