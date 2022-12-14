@@ -20,7 +20,9 @@ export default function CommentList({
 		</List>
 	) : (
 		<Divider>
-			<Typography variant="caption">No comments to show</Typography>
+			<Typography variant="caption">
+				You've reached the end of this thread!
+			</Typography>
 		</Divider>
 	);
 }

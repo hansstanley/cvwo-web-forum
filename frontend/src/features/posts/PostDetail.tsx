@@ -3,9 +3,9 @@ import {
 	Divider,
 	LinearProgress,
 	Paper,
+	Stack,
 	Typography,
 } from '@mui/material';
-import { Stack } from '@mui/system';
 import { useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { CommentAdder, CommentList } from '../comments';
@@ -36,8 +36,16 @@ export default function PostDetail() {
 				<Typography>Select a post to view comments.</Typography>
 			)}
 			<Collapse in={!!currPost}>
-				<CommentAdder />
-				<CommentList comments={rootComments} canReply />
+				<Stack direction="column" spacing={2}>
+					<CommentAdder />
+					{rootComments.length > 0 ? (
+						<CommentList comments={rootComments} canReply />
+					) : (
+						<Typography variant="body2" fontStyle="italic">
+							It's awfully quiet here...
+						</Typography>
+					)}
+				</Stack>
 			</Collapse>
 		</Stack>
 	);

@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { UpDownVoter } from '../../components';
 import { ForumComment } from '../../types';
+import { selectLoginSuccess } from '../user/userSlice';
 import CommentEditDialog from './CommentEditDialog';
 import CommentList from './CommentList';
 import CommentReply from './CommentReply';
@@ -33,6 +34,8 @@ export default function CommentStrip({
 }: CommentStripProps) {
 	const dispatch = useAppDispatch();
 	const comments = useAppSelector(selectCommentsSortedByTimestamp);
+	const loginSuccess = useAppSelector(selectLoginSuccess);
+	const { userInfo } = useAppSelector((state) => state.user);
 	const [subOpen, setSubOpen] = useState(false);
 	const [replyOpen, setReplyOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
@@ -40,6 +43,16 @@ export default function CommentStrip({
 	const subcomments = useMemo(
 		() => comments.filter((c) => c.parent_id === comment.id),
 		[comments, comment],
+	);
+
+	const showReply = useMemo(
+		() => loginSuccess && canReply,
+		[loginSuccess, canReply],
+	);
+
+	const showEdit = useMemo(
+		() => loginSuccess && userInfo?.id === comment.user?.id,
+		[loginSuccess, userInfo, comment],
 	);
 
 	const toggleSubOpen = () => {
@@ -63,16 +76,20 @@ export default function CommentStrip({
 		</Stack>
 	);
 
-	const buttons = canReply ? (
+	const buttons = (
 		<Stack direction="column">
-			<IconButton size="small" onClick={toggleReplyOpen(true)}>
-				<Reply fontSize="inherit" />
-			</IconButton>
-			<IconButton size="small" onClick={toggleEditOpen(true)}>
-				<MoreVert fontSize="inherit" />
-			</IconButton>
+			{showReply ? (
+				<IconButton size="small" onClick={toggleReplyOpen(true)}>
+					<Reply fontSize="inherit" />
+				</IconButton>
+			) : null}
+			{showEdit ? (
+				<IconButton size="small" onClick={toggleEditOpen(true)}>
+					<MoreVert fontSize="inherit" />
+				</IconButton>
+			) : null}
 		</Stack>
-	) : null;
+	);
 
 	return (
 		<ListItem disablePadding sx={{ flex: 1 }}>
@@ -100,18 +117,20 @@ export default function CommentStrip({
 				</Stack>
 				{buttons}
 			</Stack>
-			{canReply ? (
+			{showReply ? (
 				<CommentReply
 					open={replyOpen}
 					onClose={toggleReplyOpen(false)}
 					comment={comment}
 				/>
 			) : null}
-			<CommentEditDialog
-				open={editOpen}
-				onClose={toggleEditOpen(false)}
-				comment={comment}
-			/>
+			{showEdit ? (
+				<CommentEditDialog
+					open={editOpen}
+					onClose={toggleEditOpen(false)}
+					comment={comment}
+				/>
+			) : null}
 		</ListItem>
 	);
 }

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
 import { User } from '../../types';
 import { FetchStatus } from '../../types/common';
 import { handleUserLogin } from './userApi';
@@ -41,5 +42,8 @@ const userSlice = createSlice({
 });
 
 export const { onLogout } = userSlice.actions;
+
+export const selectLoginSuccess: (state: RootState) => boolean = (state) =>
+	state.user.status.status === 'success';
 
 export default userSlice.reducer;

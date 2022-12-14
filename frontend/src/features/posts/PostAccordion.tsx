@@ -7,11 +7,13 @@ import {
 	Box,
 	Button,
 	Chip,
+	Collapse,
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	Divider,
 	IconButton,
+	Paper,
 	Slide,
 	Stack,
 	Tooltip,
@@ -20,10 +22,18 @@ import {
 	useTheme,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import { forwardRef, ReactElement, Ref, SyntheticEvent, useState } from 'react';
+import {
+	forwardRef,
+	ReactElement,
+	Ref,
+	SyntheticEvent,
+	useMemo,
+	useState,
+} from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types';
 import { selectMobile } from '../theme/themeSlice';
+import { selectLoginSuccess } from '../user/userSlice';
 import PostAddDialog from './PostAddDialog';
 
 import PostDeleteDialog from './PostDeleteDialog';
@@ -37,11 +47,18 @@ export interface PostAccordionProps {
 export default function PostAccordion({ post }: PostAccordionProps) {
 	const dispatch = useAppDispatch();
 	const { currPost } = useAppSelector((state) => state.posts);
+	const { userInfo } = useAppSelector((state) => state.user);
+	const loginSuccess = useAppSelector(selectLoginSuccess);
 	const [commentOpen, setCommentOpen] = useState(false);
 	const [updateOpen, setUpdateOpen] = useState<boolean>(false);
 	const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
 	const isMobile = useAppSelector(selectMobile);
+
+	const showEditDelete = useMemo(
+		() => loginSuccess && userInfo?.id === currPost?.user?.id,
+		[loginSuccess, userInfo, currPost],
+	);
 
 	const handleChange = (event: SyntheticEvent, isExpanded: boolean) => {
 		dispatch(setCurrPostId(isExpanded ? post.id ?? -1 : -1));
@@ -63,6 +80,25 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 		setDeleteOpen(open);
 	};
 
+	const tagStrip =
+		(post.tags ?? []).length > 0 ? (
+			<Stack direction="row" spacing={1}>
+				{post.tags?.map((tag) => (
+					<Chip label={tag} onClick={handleChipClick(tag)} />
+				))}
+			</Stack>
+		) : null;
+
+	const descriptionStrip = post.description ? (
+		<Paper variant="outlined" sx={{ p: 1 }}>
+			<Typography>{post.description}</Typography>
+		</Paper>
+	) : (
+		<Typography variant="body2" fontStyle="italic">
+			No description.
+		</Typography>
+	);
+
 	return (
 		<Accordion expanded={currPost?.id === post.id} onChange={handleChange}>
 			<AccordionSummary expandIcon={<ExpandMore />}>
@@ -83,18 +119,9 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 				</Stack>
 			</AccordionSummary>
 			<AccordionDetails>
-				<Stack
-					direction="column"
-					spacing={1}
-					divider={<Divider orientation="horizontal" />}>
-					{(post.tags ?? []).length > 0 ? (
-						<Stack direction="row" spacing={1}>
-							{post.tags?.map((tag) => (
-								<Chip label={tag} onClick={handleChipClick(tag)} />
-							))}
-						</Stack>
-					) : null}
-					<Typography>{post.description}</Typography>
+				<Stack direction="column" spacing={2}>
+					{tagStrip}
+					{descriptionStrip}
 				</Stack>
 			</AccordionDetails>
 			<AccordionActions>
@@ -105,16 +132,20 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 						</IconButton>
 					</Tooltip>
 				) : null}
-				<Tooltip title="Edit post">
-					<IconButton size="small" onClick={toggleUpdateOpen(true)}>
-						<Edit fontSize="inherit" />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Delete post">
-					<IconButton size="small" onClick={toggleDeleteOpen(true)}>
-						<Delete fontSize="inherit" />
-					</IconButton>
-				</Tooltip>
+				{showEditDelete ? (
+					<>
+						<Tooltip title="Edit post">
+							<IconButton size="small" onClick={toggleUpdateOpen(true)}>
+								<Edit fontSize="inherit" />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Delete post">
+							<IconButton size="small" onClick={toggleDeleteOpen(true)}>
+								<Delete fontSize="inherit" />
+							</IconButton>
+						</Tooltip>
+					</>
+				) : null}
 			</AccordionActions>
 			<PostAddDialog
 				open={updateOpen}
