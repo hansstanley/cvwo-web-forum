@@ -11,6 +11,7 @@ import {
 import { ChangeEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumComment } from '../../types';
+import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
 import { setComments } from './commentsSlice';
 import CommentStrip from './CommentStrip';
@@ -28,7 +29,8 @@ export default function CommentReply({
 }: CommentReplyProps) {
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.user);
-	const [loading, setLoading] = useState(false);
+	const { currPost } = useAppSelector((state) => state.posts);
+	const [status, setStatus] = useState<FetchStatus>({ status: 'idle' });
 	const [reply, setReply] = useState('');
 
 	const handleClose = () => {
@@ -41,24 +43,19 @@ export default function CommentReply({
 	};
 
 	const handleCommentReply = async () => {
-		setLoading(true);
+		setStatus({ status: 'loading' });
 		try {
 			const newComment: ForumComment = {
-				commentId: -1,
-				postId: comment.postId,
 				content: reply,
-				upVoteCount: 0,
-				downVoteCount: 0,
-				parentCommentId: comment.commentId,
-				createdAt: new Date().toISOString(),
-				createdBy: userInfo,
+				forum_post_id: currPost?.id,
+				parent_id: comment.id,
+				user: userInfo,
 			};
-			const comments = await createComment(newComment);
-			dispatch(setComments(comments));
+			await dispatch(createComment(newComment));
+			setStatus({ status: 'success' });
 			handleClose();
-		} catch (e) {
-		} finally {
-			setLoading(false);
+		} catch (err) {
+			setStatus({ status: 'failure', errorMessage: `${err}` });
 		}
 	};
 
@@ -79,7 +76,7 @@ export default function CommentReply({
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
-					loading={loading}
+					loading={status.status === 'loading'}
 					variant="contained"
 					disabled={reply.length === 0}
 					onClick={handleCommentReply}>

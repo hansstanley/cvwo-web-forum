@@ -1,12 +1,14 @@
 import { Add } from '@mui/icons-material';
 import { Fab, Tooltip } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import PostAddDialog from './PostAddDialog';
 
 export default function PostAddFab() {
-	const { success } = useAppSelector((state) => state.user);
+	const { status } = useAppSelector((state) => state.user);
 	const [dialogOpen, setDialogOpen] = useState(false);
+
+	const success = useMemo(() => status.status === 'success', [status]);
 
 	const toggleDialogOpen = (open: boolean) => () => {
 		setDialogOpen(open);

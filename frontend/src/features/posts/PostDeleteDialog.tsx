@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { ForumPost } from '../../types';
+import { FetchStatus } from '../../types/common';
 import { deletePost } from './postApi';
 import { setCurrPostId, setPosts } from './postsSlice';
 
@@ -25,17 +26,17 @@ export default function PostDeleteDialog({
 	post,
 }: PostDeleteDialogProps) {
 	const dispatch = useAppDispatch();
-	const [loading, setLoading] = useState<boolean>(false);
+	const [status, setStatus] = useState<FetchStatus>({ status: 'idle' });
 
 	const handlePostDelete = async () => {
-		setLoading(true);
+		setStatus({ status: 'loading' });
 		try {
-			const posts = await deletePost(post);
-			dispatch(setPosts(posts));
+			await dispatch(deletePost(post));
 			dispatch(setCurrPostId(-1));
-		} catch (e) {
-		} finally {
-			setLoading(false);
+			setStatus({ status: 'success' });
+			handleClose();
+		} catch (err) {
+			setStatus({ status: 'failure', errorMessage: `${err}` });
 		}
 	};
 
@@ -53,7 +54,7 @@ export default function PostDeleteDialog({
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
 					variant="contained"
-					loading={loading}
+					loading={status.status === 'loading'}
 					onClick={handlePostDelete}>
 					Delete
 				</LoadingButton>

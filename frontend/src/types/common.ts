@@ -4,3 +4,8 @@ export declare interface AppProps {
 	style?: React.CSSProperties; // to pass through style props
 	onChange?: React.FormEventHandler<HTMLInputElement>; // form events! the generic parameter is the type of event.target
 }
+
+export type FetchStatus = {
+	status: 'idle' | 'loading' | 'success' | 'failure';
+	errorMessage?: string;
+};

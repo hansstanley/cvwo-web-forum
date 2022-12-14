@@ -16,9 +16,10 @@ import {
 	Typography,
 	Zoom,
 } from '@mui/material';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types';
+import { FetchStatus } from '../../types/common';
 import { createPost, updatePost } from './postApi';
 import { selectPostsTags, setPosts } from './postsSlice';
 
@@ -37,7 +38,7 @@ export default function PostAddDialog({
 	const { userInfo } = useAppSelector((state) => state.user);
 	const postsTags = useAppSelector(selectPostsTags);
 	const isEdit = useMemo(() => !!postToEdit, [postToEdit]);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [status, setStatus] = useState<FetchStatus>({ status: 'idle' });
 	const [title, setTitle] = useState<string>(postToEdit?.title ?? '');
 	const [description, setDescription] = useState<string>(
 		postToEdit?.description ?? '',
@@ -55,26 +56,27 @@ export default function PostAddDialog({
 	};
 
 	const handlePost = async () => {
-		setLoading(true);
+		setStatus({ status: 'loading' });
+
 		const newPost: ForumPost = {
-			postId: postToEdit?.postId ?? -1, // ignored
 			title,
 			description,
 			tags: activeTags,
-			createdAt: new Date().toISOString(),
-			createdBy: userInfo,
 		};
 
 		try {
-			const posts = isEdit
-				? await updatePost(newPost)
-				: await createPost(newPost);
-			dispatch(setPosts(posts));
+			if (isEdit) {
+				newPost.id = postToEdit?.id;
+				await dispatch(updatePost(newPost));
+			} else {
+				newPost.user = userInfo;
+				await dispatch(createPost(newPost));
+			}
+			setStatus({ status: 'success' });
 			handleClose();
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setLoading(false);
+		} catch (err) {
+			// TODO: handle create/update error
+			setStatus({ status: 'failure', errorMessage: `${err}` });
 		}
 	};
 
@@ -170,7 +172,7 @@ export default function PostAddDialog({
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
-					loading={loading}
+					loading={status.status === 'loading'}
 					onClick={handlePost}
 					variant="contained">
 					{isEdit ? 'Edit' : 'Post'}

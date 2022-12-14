@@ -20,18 +20,18 @@ export default function UserLogoutDialog({
 }: UserLogoutDialogProps) {
 	const dispatch = useAppDispatch();
 
-	const handleLogout = () => {
-		dispatch(onLogout());
-		onClose();
-	};
-
 	const handleClose = () => {
 		onClose();
 	};
 
+	const handleLogout = () => {
+		dispatch(onLogout());
+		handleClose();
+	};
+
 	return (
-		<Dialog open={open} onClose={handleClose}>
-			<DialogTitle>Logout</DialogTitle>
+		<Dialog open={open} onClose={handleClose} fullWidth>
+			<DialogTitle>Hope to see you again!</DialogTitle>
 			<DialogContent>
 				<Typography variant="body1">Are you sure to logout?</Typography>
 			</DialogContent>

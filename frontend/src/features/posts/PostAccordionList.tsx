@@ -1,10 +1,22 @@
 import { Box, Chip, Divider, Typography } from '@mui/material';
-import { useAppSelector } from '../../app/hooks';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PostAccordion from './PostAccordion';
+import { fetchPosts } from './postApi';
 import { selectFilteredPosts } from './postsSlice';
 
 export default function PostAccordingList() {
+	const dispatch = useAppDispatch();
+	const { status, errorMessage } = useAppSelector(
+		(state) => state.posts.fetchAllStatus,
+	);
 	const filteredPosts = useAppSelector(selectFilteredPosts);
+
+	useEffect(() => {
+		if (status === 'idle') {
+			dispatch(fetchPosts());
+		}
+	}, [dispatch, status]);
 
 	return (
 		<Box sx={{ flex: 1 }}>

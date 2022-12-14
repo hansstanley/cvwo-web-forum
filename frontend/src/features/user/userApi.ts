@@ -1,16 +1,27 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
+import { client } from '../../api/client';
 import { User } from '../../types';
 
-const users: User[] = [{ userId: 1, username: 'stanley' }];
-
-export async function handleUserLogin(username: string) {
-	if (username.length < 6)
-		throw new Error('Username should be at least 6 characters in length.');
-
-	const user = users.find((u) => u.username === username);
-	if (!user) throw new Error('Username not found.');
-
-	await new Promise<void>((resolve, reject) => {
-		setTimeout(() => resolve(), 1000);
-	});
-	return user;
-}
+export const handleUserLogin = createAsyncThunk(
+	'user/login',
+	async (username: string) => {
+		try {
+			const response = await client.get<User>('users', {
+				params: { username },
+			});
+			return response.data;
+		} catch (err) {
+			if (err instanceof AxiosError) {
+				switch (err.response?.status) {
+					case 404:
+						throw new Error('Username does not exist.');
+					default:
+						throw new Error(`An error occurred: ${err.message}`);
+				}
+			} else {
+				throw err;
+			}
+		}
+	},
+);

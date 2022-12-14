@@ -1,22 +1,80 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
+import { client } from '../../api/client';
 import { ForumPost } from '../../types';
 
-let posts: ForumPost[] = [];
+const BASE_ROUTE = 'forum_posts';
 
-export async function createPost(post: ForumPost) {
-	post.postId = posts.length + 1;
-	posts = posts.concat([post]);
-	await new Promise<void>((resolve, reject) => setTimeout(resolve, 1000));
-	return posts;
-}
+export const fetchPosts = createAsyncThunk('posts/all', async () => {
+	try {
+		const response = await client.get<ForumPost[]>(`${BASE_ROUTE}`);
+		return response.data;
+	} catch (err) {
+		// TODO: handle fetch posts errors
+		throw err;
+	}
+});
 
-export async function updatePost(post: ForumPost) {
-	posts = posts.map((p) => (p.postId === post.postId ? post : p));
-	await new Promise<void>((resolve, reject) => setTimeout(resolve, 1000));
-	return posts;
-}
+export const createPost = createAsyncThunk(
+	'posts/create',
+	async (post: ForumPost) => {
+		if (!post.user) {
+			throw new Error('User is needed for post creation.');
+		}
+		try {
+			const response = await client.post<ForumPost>(
+				`users/${post.user.id}/${BASE_ROUTE}`,
+				post,
+			);
+			return response.data;
+		} catch (err) {
+			if (err instanceof AxiosError) {
+				switch (err.response?.status) {
+					case 400:
+						throw new Error(`Bad request when creating post.`);
+					default:
+						throw new Error(`An error occurred: ${err.message}`);
+				}
+			} else {
+				throw err;
+			}
+		}
+	},
+);
 
-export async function deletePost(post: ForumPost) {
-	posts = posts.filter((p) => p.postId !== post.postId);
-	await new Promise<void>((resolve, reject) => setTimeout(resolve, 1000));
-	return posts;
-}
+export const updatePost = createAsyncThunk(
+	'posts/update',
+	async (post: ForumPost) => {
+		if (post.id === undefined) {
+			throw new Error('Post id is needed for update.');
+		}
+		try {
+			const response = await client.patch<ForumPost>(
+				`${BASE_ROUTE}/${post.id}`,
+				post,
+			);
+			return response.data;
+		} catch (err) {
+			// TODO: handle post update errors
+			throw err;
+		}
+	},
+);
+
+export const deletePost = createAsyncThunk(
+	'posts/delete',
+	async (post: ForumPost) => {
+		if (post.id === undefined) {
+			throw new Error('Post id is need for deletion.');
+		}
+		try {
+			const response = await client.delete<ForumPost>(
+				`${BASE_ROUTE}/${post.id}`,
+			);
+			return response.data;
+		} catch (err) {
+			// TODO: handle post delete errors
+			throw err;
+		}
+	},
+);

@@ -1,12 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { ForumComment } from '../../types';
+import { FetchStatus } from '../../types/common';
+import {
+	createComment,
+	deleteComment,
+	fetchCommentsByPost,
+	updateComment,
+} from './commentsApi';
 
 interface CommentsState {
+	fetchStatus: FetchStatus;
 	comments: ForumComment[];
 }
 
 const initialState: CommentsState = {
+	fetchStatus: { status: 'idle' },
 	comments: [],
 };
 
@@ -18,29 +27,49 @@ const commentsSlice = createSlice({
 			state.comments = action.payload;
 		},
 	},
+	extraReducers(builder) {
+		builder
+			.addCase(fetchCommentsByPost.pending, (state, action) => {
+				state.fetchStatus = { status: 'loading' };
+			})
+			.addCase(fetchCommentsByPost.fulfilled, (state, action) => {
+				state.fetchStatus = { status: 'success' };
+				state.comments = action.payload;
+			})
+			.addCase(fetchCommentsByPost.rejected, (state, action) => {
+				console.log(action.error);
+				state.fetchStatus = {
+					status: 'failure',
+					errorMessage: action.error.message,
+				};
+			});
+		builder
+			.addCase(createComment.fulfilled, (state, action) => {
+				state.comments.push(action.payload);
+			})
+			.addCase(updateComment.fulfilled, (state, action) => {
+				state.comments = state.comments.map((c) =>
+					c.id === action.payload.id ? action.payload : c,
+				);
+			})
+			.addCase(deleteComment.fulfilled, (state, action) => {
+				state.comments = state.comments.filter(
+					(c) => c.id !== action.payload.id,
+				);
+			});
+	},
 });
 
 export const { setComments } = commentsSlice.actions;
 
-export const selectCurrPostComments: (state: RootState) => ForumComment[] = (
-	state,
-) => {
-	const postComments = state.comments.comments.filter(
-		(c) => c.postId === state.posts.currPost?.postId,
+export const selectCommentsSortedByTimestamp: (
+	state: RootState,
+) => ForumComment[] = (state) => {
+	const sorted = [...state.comments.comments];
+	sorted.sort((c1, c2) =>
+		('' + c2.updated_at).localeCompare('' + c1.updated_at),
 	);
-	const rootComments: Map<number, ForumComment> = new Map(
-		postComments.map((c) => [c.commentId, { ...c }]),
-	);
-	for (let comment of postComments) {
-		if (comment.parentCommentId) {
-			const parent = rootComments.get(comment.parentCommentId);
-			if (parent) {
-				parent.subComments = parent.subComments ?? [];
-				parent.subComments.push(comment);
-			}
-		}
-	}
-	return Array.from(rootComments.values()).filter((c) => !c.parentCommentId);
+	return sorted;
 };
 
 export default commentsSlice.reducer;

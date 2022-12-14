@@ -1,22 +1,21 @@
 import { User } from './user';
 
-export type ForumPost = {
-	postId: number;
+export interface ForumPost {
+	id?: number;
 	title: string;
 	description: string;
 	tags?: string[];
-	createdAt: string;
-	createdBy?: User;
-};
+	user?: User;
+	forum_comments?: ForumComment[];
+	updated_at?: string;
+}
 
 export type ForumComment = {
-	commentId: number;
-	postId: number;
+	id?: number;
 	content: string;
-	upVoteCount: number;
-	downVoteCount: number;
-	parentCommentId?: number;
-	subComments?: ForumComment[];
-	createdAt: string;
-	createdBy?: User;
+	forum_post_id?: number;
+	parent_id?: number;
+	user?: User;
+	forum_comments?: ForumComment[];
+	updated_at?: string;
 };

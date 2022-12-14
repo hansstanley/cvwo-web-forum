@@ -12,12 +12,15 @@ import {
 	Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { UpDownVoter } from '../../components';
 import { ForumComment } from '../../types';
 import CommentEditDialog from './CommentEditDialog';
 import CommentList from './CommentList';
 import CommentReply from './CommentReply';
+import { fetchCommentsByComment, fetchCommentsByPost } from './commentsApi';
+import { selectCommentsSortedByTimestamp } from './commentsSlice';
 
 export interface CommentStripProps {
 	comment: ForumComment;
@@ -28,9 +31,16 @@ export default function CommentStrip({
 	comment,
 	canReply = false,
 }: CommentStripProps) {
+	const dispatch = useAppDispatch();
+	const comments = useAppSelector(selectCommentsSortedByTimestamp);
 	const [subOpen, setSubOpen] = useState(false);
 	const [replyOpen, setReplyOpen] = useState(false);
 	const [editOpen, setEditOpen] = useState(false);
+
+	const subcomments = useMemo(
+		() => comments.filter((c) => c.parent_id === comment.id),
+		[comments, comment],
+	);
 
 	const toggleSubOpen = () => {
 		setSubOpen(!subOpen);
@@ -47,9 +57,9 @@ export default function CommentStrip({
 	const header = (
 		<Stack direction="row" spacing={2} alignItems="flex-end" flex={1}>
 			<Typography variant="body1" fontWeight="bold">
-				{comment.createdBy?.username ?? 'Unknown'}
+				{comment.user?.username ?? 'Unknown'}
 			</Typography>
-			<Typography variant="caption">{comment.createdAt}</Typography>
+			<Typography variant="caption">{comment.updated_at}</Typography>
 		</Stack>
 	);
 
@@ -75,7 +85,7 @@ export default function CommentStrip({
 						<Stack flex={1} direction="column" spacing={1}>
 							{header}
 							<Typography variant="body1">{comment.content}</Typography>
-							{comment.subComments ? (
+							{comment.forum_comments?.length ? (
 								<MoreHoriz
 									fontSize="small"
 									color="disabled"
@@ -85,10 +95,7 @@ export default function CommentStrip({
 						</Stack>
 					</ListItemButton>
 					<Collapse in={subOpen} sx={{ ml: 2 }}>
-						<CommentList
-							comments={comment.subComments ?? []}
-							canReply={canReply}
-						/>
+						<CommentList comments={subcomments} canReply={canReply} />
 					</Collapse>
 				</Stack>
 				{buttons}

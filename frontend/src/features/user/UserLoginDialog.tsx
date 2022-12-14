@@ -14,10 +14,9 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { handleUserLogin } from './userApi';
-import { onLoginFailure, onLoginStart, onLoginSuccess } from './userSlice';
 
 export interface UserLoginDialogProps {
 	open: boolean;
@@ -29,43 +28,31 @@ export default function UserLoginDialog({
 	onClose,
 }: UserLoginDialogProps) {
 	const dispatch = useAppDispatch();
-	const { loading } = useAppSelector((state) => state.user);
-	const [alertOpen, setAlertOpen] = useState<boolean>(false);
-	const [alertMessage, setAlertMessage] = useState<string>('');
+	const { status } = useAppSelector((state) => state.user);
 	const [username, setUsername] = useState<string>('');
 
-	const handleLogin = async () => {
-		setAlertOpen(false);
-		try {
-			dispatch(onLoginStart());
-			const user = await handleUserLogin(username);
-			dispatch(onLoginSuccess(user));
-			handleClose();
-		} catch (e) {
-			dispatch(onLoginFailure());
-			if (e instanceof Error) {
-				setAlertMessage(e.message);
-			} else if (typeof e === 'string') {
-				setAlertMessage(e);
-			}
-			setAlertOpen(true);
-		}
+	const handleLogin = () => {
+		dispatch(handleUserLogin(username));
 	};
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		onClose();
-		setAlertOpen(false);
-		setAlertMessage('');
 		setUsername('');
-	};
+	}, [onClose]);
 
 	const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setUsername(event.target.value);
 	};
 
+	useEffect(() => {
+		if (status.status === 'success') {
+			handleClose();
+		}
+	}, [status, handleClose]);
+
 	return (
 		<Dialog open={open} onClose={handleClose}>
-			<DialogTitle>Login</DialogTitle>
+			<DialogTitle>Nice to meet you!</DialogTitle>
 			<DialogContent>
 				<Stack direction="column" spacing={2}>
 					<DialogContentText>
@@ -76,10 +63,10 @@ export default function UserLoginDialog({
 						required
 						id="username"
 						type="text"
-						error={alertOpen}
+						error={status.status === 'failure'}
 						label="Username"
 						value={username}
-						helperText={alertMessage}
+						helperText={status.errorMessage}
 						variant="outlined"
 						onChange={handleUsernameChange}
 					/>
@@ -88,7 +75,7 @@ export default function UserLoginDialog({
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
-					loading={loading}
+					loading={status.status === 'loading'}
 					variant="contained"
 					onClick={handleLogin}>
 					Login

@@ -10,16 +10,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_11_161729) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_13_080247) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "forum_comments", force: :cascade do |t|
+    t.string "content"
+    t.boolean "deleted", default: false
+    t.bigint "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "forum_post_id"
+    t.bigint "user_id"
+    t.index ["forum_post_id"], name: "index_forum_comments_on_forum_post_id"
+    t.index ["parent_id"], name: "index_forum_comments_on_parent_id"
+    t.index ["user_id"], name: "index_forum_comments_on_user_id"
+  end
+
+  create_table "forum_posts", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "tags", default: [], array: true
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_forum_posts_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
-    t.integer "userId"
     t.string "username"
     t.string "password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "forum_comments", "forum_comments", column: "parent_id"
+  add_foreign_key "forum_comments", "forum_posts", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "forum_comments", "users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "forum_posts", "users", on_update: :cascade, on_delete: :cascade
 end

@@ -43,10 +43,9 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 
 	const isMobile = useAppSelector(selectMobile);
 
-	const handleChange =
-		(postId: number) => (event: SyntheticEvent, isExpanded: boolean) => {
-			dispatch(setCurrPostId(isExpanded ? postId : -1));
-		};
+	const handleChange = (event: SyntheticEvent, isExpanded: boolean) => {
+		dispatch(setCurrPostId(isExpanded ? post.id ?? -1 : -1));
+	};
 
 	const handleChipClick = (tag: string) => () => {
 		dispatch(addSearchTag(tag));
@@ -65,9 +64,7 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 	};
 
 	return (
-		<Accordion
-			expanded={currPost?.postId === post.postId}
-			onChange={handleChange(post.postId)}>
+		<Accordion expanded={currPost?.id === post.id} onChange={handleChange}>
 			<AccordionSummary expandIcon={<ExpandMore />}>
 				<Stack direction="column" spacing={1}>
 					<Typography fontWeight="bold">{post.title}</Typography>
@@ -76,8 +73,8 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 						spacing={1}
 						divider={<Divider orientation="vertical" flexItem />}>
 						{[
-							post.createdBy?.username || 'Unknown',
-							post.createdAt,
+							post.user?.username || 'Unknown',
+							post.updated_at,
 							...(post.tags ?? []),
 						].map((s) => (
 							<Typography variant="caption">{s}</Typography>

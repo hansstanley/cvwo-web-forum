@@ -23,7 +23,7 @@ function App() {
 	const mobile = useMediaQuery(theme.breakpoints.down('md'));
 	useEffect(() => {
 		dispatch(setMobile(mobile));
-	}, [mobile]);
+	}, [dispatch, mobile]);
 
 	return (
 		<ThemeProvider theme={theme}>

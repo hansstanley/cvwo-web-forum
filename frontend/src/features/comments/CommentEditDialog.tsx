@@ -10,6 +10,7 @@ import {
 import { ChangeEvent, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { ForumComment } from '../../types';
+import { FetchStatus } from '../../types/common';
 import { deleteComment, updateComment } from './commentsApi';
 import { setComments } from './commentsSlice';
 
@@ -25,7 +26,7 @@ export default function CommentEditDialog({
 	comment,
 }: CommentEditDialogProps) {
 	const dispatch = useAppDispatch();
-	const [loading, setLoading] = useState(false);
+	const [status, setStatus] = useState<FetchStatus>({ status: 'idle' });
 	const [content, setContent] = useState(comment.content);
 
 	const handleClose = () => {
@@ -37,28 +38,26 @@ export default function CommentEditDialog({
 	};
 
 	const handleCommentUpdate = async () => {
-		setLoading(true);
+		setStatus({ status: 'loading' });
 		try {
 			const newComment: ForumComment = { ...comment };
 			newComment.content = content;
-			const comments = await updateComment(newComment);
-			dispatch(setComments(comments));
+			await dispatch(updateComment(newComment));
+			setStatus({ status: 'success' });
 			handleClose();
-		} catch (e) {
-		} finally {
-			setLoading(false);
+		} catch (err) {
+			setStatus({ status: 'failure', errorMessage: `${err}` });
 		}
 	};
 
 	const handleCommentDelete = async () => {
-		setLoading(true);
+		setStatus({ status: 'loading' });
 		try {
-			const comments = await deleteComment(comment);
-			dispatch(setComments(comments));
+			await dispatch(deleteComment(comment));
+			setStatus({ status: 'success' });
 			handleClose();
-		} catch (e) {
-		} finally {
-			setLoading(false);
+		} catch (err) {
+			setStatus({ status: 'failure', errorMessage: `${err}` });
 		}
 	};
 
@@ -79,14 +78,14 @@ export default function CommentEditDialog({
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
-					loading={loading}
+					loading={status.status === 'loading'}
 					variant="outlined"
 					color="error"
 					onClick={handleCommentDelete}>
 					Delete
 				</LoadingButton>
 				<LoadingButton
-					loading={loading}
+					loading={status.status === 'loading'}
 					variant="contained"
 					onClick={handleCommentUpdate}>
 					Edit
