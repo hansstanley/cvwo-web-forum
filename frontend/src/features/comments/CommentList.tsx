@@ -6,16 +6,23 @@ import CommentStrip from './CommentStrip';
 export interface CommentListProps {
 	comments: ForumComment[];
 	canReply?: boolean;
+	depth?: number;
 }
 
 export default function CommentList({
 	comments,
 	canReply = false,
+	depth = 0,
 }: CommentListProps) {
 	return comments.length > 0 ? (
 		<List>
 			{comments.map((c) => (
-				<CommentStrip comment={c} canReply={canReply} />
+				<CommentStrip
+					key={c.id}
+					comment={c}
+					canReply={canReply}
+					depth={depth}
+				/>
 			))}
 		</List>
 	) : (

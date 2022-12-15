@@ -7,6 +7,7 @@ export interface ForumPost {
 	tags?: string[];
 	user?: User;
 	forum_comments?: ForumComment[];
+	created_at?: string;
 	updated_at?: string;
 }
 
@@ -21,3 +22,5 @@ export interface ForumComment {
 	updated_at?: string;
 	deleted?: boolean;
 }
+
+export type SortTerm = 'timestamp' | 'timestamp_reversed' | 'title' | 'user';

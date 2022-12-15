@@ -83,8 +83,8 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 	const tagStrip =
 		(post.tags ?? []).length > 0 ? (
 			<Stack direction="row" spacing={1}>
-				{post.tags?.map((tag) => (
-					<Chip label={tag} onClick={handleChipClick(tag)} />
+				{post.tags?.map((tag, index) => (
+					<Chip key={index} label={tag} onClick={handleChipClick(tag)} />
 				))}
 			</Stack>
 		) : null;
@@ -112,8 +112,10 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 							post.user?.username || 'Unknown',
 							post.updated_at,
 							...(post.tags ?? []),
-						].map((s) => (
-							<Typography variant="caption">{s}</Typography>
+						].map((s, index) => (
+							<Typography key={index} variant="caption">
+								{s}
+							</Typography>
 						))}
 					</Stack>
 				</Stack>

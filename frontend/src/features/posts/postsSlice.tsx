@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ForumPost } from '../../types/post';
+import { ForumPost, SortTerm } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, deletePost, fetchPosts, updatePost } from './postApi';
 
@@ -13,6 +13,7 @@ interface PostsState {
 	currPost?: ForumPost;
 	searchTags: string[];
 	searchTerm?: string;
+	sortTerm: SortTerm;
 }
 
 const initialState: PostsState = {
@@ -22,6 +23,7 @@ const initialState: PostsState = {
 	deleteStatus: { status: 'idle' },
 	posts: [],
 	searchTags: [],
+	sortTerm: 'timestamp_reversed',
 };
 
 const postsSlice = createSlice({
@@ -135,36 +137,59 @@ export const selectPostsTags: (state: RootState) => string[] = (state) => {
 	return Array.from(tags);
 };
 
-export const selectFilteredPosts: (state: RootState) => ForumPost[] = (
-	state,
-) => {
-	const terms =
-		state.posts.searchTerm
-			?.trim()
-			.split(' ')
-			.map((t) => t.trim())
-			.filter((t) => !!t)
-			.map((t) => t.toLowerCase()) ?? [];
-	const filterString = (s: string) =>
-		terms.reduce((prev, curr) => prev || s.toLowerCase().includes(curr), false);
-	const filterTag = (post: ForumPost) =>
-		state.posts.searchTags.reduce(
-			(prev, curr) => prev || (post.tags?.includes(curr) ?? false),
-			false,
-		);
-	const fileredBySearch =
-		terms.length === 0
-			? state.posts.posts
-			: state.posts.posts.filter(
-					(post) =>
-						filterString(post.title ?? '') ||
-						filterString(post.description ?? '') ||
-						filterString(post.user?.username ?? ''),
-			  );
-	const filteredByTags = fileredBySearch.filter(
-		(post) => state.posts.searchTags.length === 0 || filterTag(post),
-	);
-	return filteredByTags;
-};
+export const selectPosts: (state: RootState) => ForumPost[] = (state) =>
+	state.posts.posts;
+
+export const selectSortTerm: (state: RootState) => SortTerm = (state) =>
+	state.posts.sortTerm;
+
+export const selectSearchTags: (state: RootState) => string[] = (state) =>
+	state.posts.searchTags.map((tag) => tag.trim().toLowerCase());
+
+export const selectSearchTerms: (state: RootState) => string[] = (state) =>
+	state.posts.searchTerm
+		?.trim()
+		.split(' ')
+		.map((term) => term.trim().toLowerCase())
+		.filter((term) => !!term) ?? [];
+
+export const selectPostsToShow = createSelector(
+	[selectPosts, selectSortTerm, selectSearchTags, selectSearchTerms],
+	(posts, sortTerm, searchTags, searchTerms) =>
+		posts
+			.filter((p) => stringHasTerms(p.tags ?? [], searchTags))
+			.filter(
+				(p) =>
+					stringHasTerms(p.title, searchTerms) ||
+					stringHasTerms(p.description, searchTerms) ||
+					stringHasTerms(p.user?.username ?? '', searchTerms),
+			)
+			.sort((p1, p2) => {
+				switch (sortTerm) {
+					case 'timestamp':
+						return ('' + p1.created_at).localeCompare('' + p2.created_at);
+					case 'timestamp_reversed':
+						return ('' + p2.created_at).localeCompare('' + p1.created_at);
+					case 'title':
+						return p1.title.localeCompare(p2.title);
+					case 'user':
+						return ('' + p1.user?.username).localeCompare(
+							'' + p2.user?.username,
+						);
+					default:
+						return (p1.id ?? 0) - (p2.id ?? 0);
+				}
+			}),
+);
 
 export default postsSlice.reducer;
+
+function stringHasTerms(s: string | string[], searchTerms: string[]) {
+	if (searchTerms.length === 0) return true;
+	if (typeof s === 'string') {
+		s = s.toLowerCase();
+	} else {
+		s = s.map((str) => str.toLowerCase());
+	}
+	return searchTerms.reduce((prev, curr) => prev || s.includes(curr), false);
+}

@@ -3,14 +3,14 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PostAccordion from './PostAccordion';
 import { fetchPosts } from './postApi';
-import { selectFilteredPosts } from './postsSlice';
+import { selectPostsToShow } from './postsSlice';
 
-export default function PostAccordingList() {
+export default function PostAccordionList() {
 	const dispatch = useAppDispatch();
 	const { status, errorMessage } = useAppSelector(
 		(state) => state.posts.fetchAllStatus,
 	);
-	const filteredPosts = useAppSelector(selectFilteredPosts);
+	const posts = useAppSelector(selectPostsToShow);
 
 	useEffect(() => {
 		if (status === 'idle') {
@@ -20,8 +20,8 @@ export default function PostAccordingList() {
 
 	return (
 		<Box sx={{ flex: 1 }}>
-			{filteredPosts.length > 0 ? (
-				filteredPosts.map((post) => <PostAccordion post={post} />)
+			{posts.length > 0 ? (
+				posts.map((post) => <PostAccordion key={post.id} post={post} />)
 			) : (
 				<Divider>
 					<Chip label="No posts to show" />

@@ -1,5 +1,6 @@
+import { colors } from '@mui/material';
 import { AuthResponse } from '../types/user';
-import { AUTH_TOKEN_KEY } from './constants';
+import { AUTH_TOKEN_KEY, COLORS } from './constants';
 
 export function getAuth() {
 	const authString = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -13,4 +14,8 @@ export function setAuth(auth: AuthResponse | undefined) {
 	} else {
 		localStorage.removeItem(AUTH_TOKEN_KEY);
 	}
+}
+
+export function randomColor() {
+	return COLORS[Math.floor(Math.random() * COLORS.length)];
 }

@@ -28,6 +28,9 @@ const themeSlice = createSlice({
 
 export const { toggleMode, setMobile } = themeSlice.actions;
 
+export const selectLightMode = (state: RootState) =>
+	state.theme.mode === 'light';
+
 export const selectMobile = (state: RootState) => state.theme.mobile;
 
 export default themeSlice.reducer;

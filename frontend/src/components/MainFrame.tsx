@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useAppSelector } from '../app/hooks';
 import {
-	PostAccordingList,
+	PostAccordionList,
 	PostAccordion,
 	PostDetail,
 } from '../features/posts';
@@ -30,7 +30,7 @@ export default function MainFrame() {
 			<FixedHeightFrame>
 				<Stack direction="column" spacing={2}>
 					<PostSearch />
-					<PostAccordingList />
+					<PostAccordionList />
 				</Stack>
 			</FixedHeightFrame>
 			{isMobile ? null : (

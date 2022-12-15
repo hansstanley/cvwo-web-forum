@@ -60,6 +60,10 @@ const userSlice = createSlice({
 
 export const { initAuth, onLogout } = userSlice.actions;
 
+export const selectAuth: (state: RootState) => AuthResponse | undefined = (
+	state,
+) => state.user.auth;
+
 export const selectLoginSuccess: (state: RootState) => boolean = (state) =>
 	state.user.status.status === 'success';
 

@@ -139,8 +139,9 @@ export default function PostAddDialog({
 							startAdornment: (
 								<InputAdornment position="start">
 									<Stack direction="row" spacing={1}>
-										{activeTags.map((tag) => (
+										{activeTags.map((tag, index) => (
 											<Chip
+												key={index}
 												label={tag}
 												variant="outlined"
 												onDelete={handleTagDelete(tag)}
@@ -163,8 +164,8 @@ export default function PostAddDialog({
 					<Stack direction="row" spacing={1}>
 						{postsTags
 							.filter((tag) => !activeTags.includes(tag))
-							.map((tag) => (
-								<Chip label={tag} onClick={handleTagClick(tag)} />
+							.map((tag, index) => (
+								<Chip key={index} label={tag} onClick={handleTagClick(tag)} />
 							))}
 					</Stack>
 				</Stack>

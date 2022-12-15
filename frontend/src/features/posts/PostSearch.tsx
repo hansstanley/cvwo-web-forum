@@ -39,6 +39,7 @@ export default function PostSearch() {
 	};
 
 	const handleSearchInput = (event: ChangeEvent<HTMLInputElement>) => {
+		console.log(event.target.value);
 		dispatch(setSearchTerm(event.target.value));
 	};
 
@@ -61,14 +62,18 @@ export default function PostSearch() {
 				placeholder="Search posts"
 				onClick={handleSearchFocus(true)}
 				onChange={handleSearchInput}
-				value={searchTerm}
+				value={searchTerm ?? ''}
 				InputProps={{
 					startAdornment: (
 						<InputAdornment position="start">
 							<Stack direction="row" spacing={1} alignItems="center">
 								<Search />
-								{searchTags.map((tag) => (
-									<Chip label={tag} onDelete={handleChipDelete(tag)} />
+								{searchTags.map((tag, index) => (
+									<Chip
+										key={index}
+										label={tag}
+										onDelete={handleChipDelete(tag)}
+									/>
 								))}
 							</Stack>
 						</InputAdornment>
@@ -97,8 +102,12 @@ export default function PostSearch() {
 					<CardContent>
 						<Stack direction="row" spacing={1} flexWrap="wrap">
 							{inactiveTags.length > 0 ? (
-								inactiveTags.map((tag) => (
-									<Chip label={tag} onClick={handleChipClick(tag)} />
+								inactiveTags.map((tag, index) => (
+									<Chip
+										key={index}
+										label={tag}
+										onClick={handleChipClick(tag)}
+									/>
 								))
 							) : (
 								<Typography variant="caption">No more tags.</Typography>

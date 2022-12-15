@@ -1,10 +1,10 @@
-import axios, { AxiosInstance } from 'axios';
-import { RootState } from '../../app/store';
+import { createSelector } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { selectAuth } from '../user/userSlice';
 
-export const selectClient: (state: RootState) => AxiosInstance = (state) =>
-	axios.create({
+export const selectClient = createSelector([selectAuth], (auth) => {
+	return axios.create({
 		baseURL: process.env.REACT_APP_BASE_URL,
-		headers: state.user.auth
-			? { Authorization: `Bearer ${state.user.auth.token}` }
-			: undefined,
+		headers: auth ? { Authorization: `Bearer ${auth.token}` } : undefined,
 	});
+});

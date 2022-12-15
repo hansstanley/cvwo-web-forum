@@ -47,7 +47,7 @@ export default function UserLoginDialog({
 		onClose();
 		setAuth({ username: '', password: '' });
 		setRegister(false);
-	}, [dispatch, onClose]);
+	}, [onClose]);
 
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setAuth({
