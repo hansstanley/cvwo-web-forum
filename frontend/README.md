@@ -1,4 +1,8 @@
-# Getting Started with Create React App
+# Gossip on Rails
+
+**Name** Stanley Han
+
+**Matriculation number** A0179442X
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

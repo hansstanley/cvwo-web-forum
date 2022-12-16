@@ -32,6 +32,7 @@ export default function MainFrame() {
 					<PostSearch />
 					<PostAccordionList />
 				</Stack>
+				<Toolbar />
 			</FixedHeightFrame>
 			{isMobile ? null : (
 				<FixedHeightFrame>

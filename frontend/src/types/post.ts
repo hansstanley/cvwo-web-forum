@@ -23,4 +23,11 @@ export interface ForumComment {
 	deleted?: boolean;
 }
 
-export type SortTerm = 'timestamp' | 'timestamp_reversed' | 'title' | 'user';
+export type SortByTerm = 'timestamp' | 'title' | 'user';
+
+export interface SortTerm {
+	term: SortByTerm;
+	ascending: boolean;
+}
+
+export type FilterTerm = 'all' | 'user';

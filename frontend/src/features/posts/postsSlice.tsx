@@ -1,8 +1,9 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ForumPost, SortTerm } from '../../types/post';
+import { FilterTerm, ForumPost, SortTerm } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, deletePost, fetchPosts, updatePost } from './postApi';
+import { selectUser } from '../user/userSlice';
 
 interface PostsState {
 	fetchAllStatus: FetchStatus;
@@ -14,6 +15,7 @@ interface PostsState {
 	searchTags: string[];
 	searchTerm?: string;
 	sortTerm: SortTerm;
+	filterTerm: FilterTerm;
 }
 
 const initialState: PostsState = {
@@ -23,7 +25,8 @@ const initialState: PostsState = {
 	deleteStatus: { status: 'idle' },
 	posts: [],
 	searchTags: [],
-	sortTerm: 'timestamp_reversed',
+	sortTerm: { term: 'timestamp', ascending: false },
+	filterTerm: 'all',
 };
 
 const postsSlice = createSlice({
@@ -49,6 +52,12 @@ const postsSlice = createSlice({
 		},
 		setSearchTerm: (state, action: PayloadAction<string>) => {
 			state.searchTerm = action.payload;
+		},
+		setSortTerm: (state, action: PayloadAction<SortTerm>) => {
+			state.sortTerm = action.payload;
+		},
+		setFilterTerm: (state, action: PayloadAction<FilterTerm>) => {
+			state.filterTerm = action.payload;
 		},
 		setPosts: (state, action: PayloadAction<ForumPost[]>) => {
 			state.posts = action.payload;
@@ -124,6 +133,8 @@ export const {
 	addSearchTag,
 	dropSearchTag,
 	setSearchTerm,
+	setSortTerm,
+	setFilterTerm,
 	setPosts,
 } = postsSlice.actions;
 
@@ -140,13 +151,15 @@ export const selectPostsTags: (state: RootState) => string[] = (state) => {
 export const selectPosts: (state: RootState) => ForumPost[] = (state) =>
 	state.posts.posts;
 
+export const selectFilterTerm = (state: RootState) => state.posts.filterTerm;
+
 export const selectSortTerm: (state: RootState) => SortTerm = (state) =>
 	state.posts.sortTerm;
 
-export const selectSearchTags: (state: RootState) => string[] = (state) =>
+const selectSearchTags: (state: RootState) => string[] = (state) =>
 	state.posts.searchTags.map((tag) => tag.trim().toLowerCase());
 
-export const selectSearchTerms: (state: RootState) => string[] = (state) =>
+const selectSearchTerms: (state: RootState) => string[] = (state) =>
 	state.posts.searchTerm
 		?.trim()
 		.split(' ')
@@ -154,9 +167,26 @@ export const selectSearchTerms: (state: RootState) => string[] = (state) =>
 		.filter((term) => !!term) ?? [];
 
 export const selectPostsToShow = createSelector(
-	[selectPosts, selectSortTerm, selectSearchTags, selectSearchTerms],
-	(posts, sortTerm, searchTags, searchTerms) =>
+	[
+		selectPosts,
+		selectFilterTerm,
+		selectSortTerm,
+		selectSearchTags,
+		selectSearchTerms,
+		selectUser,
+	],
+	(posts, filterTerm, sortTerm, searchTags, searchTerms, user) =>
 		posts
+			.filter((p) => {
+				switch (filterTerm) {
+					case 'all':
+						return true;
+					case 'user':
+						return p.user?.id === user?.id;
+					default:
+						return true;
+				}
+			})
 			.filter((p) => stringHasTerms(p.tags ?? [], searchTags))
 			.filter(
 				(p) =>
@@ -165,19 +195,20 @@ export const selectPostsToShow = createSelector(
 					stringHasTerms(p.user?.username ?? '', searchTerms),
 			)
 			.sort((p1, p2) => {
-				switch (sortTerm) {
+				const order = sortTerm.ascending ? [p1, p2] : [p2, p1];
+				switch (sortTerm.term) {
 					case 'timestamp':
-						return ('' + p1.created_at).localeCompare('' + p2.created_at);
-					case 'timestamp_reversed':
-						return ('' + p2.created_at).localeCompare('' + p1.created_at);
+						return ('' + order[0].created_at).localeCompare(
+							'' + order[1].created_at,
+						);
 					case 'title':
-						return p1.title.localeCompare(p2.title);
+						return order[0].title.localeCompare(order[1].title);
 					case 'user':
-						return ('' + p1.user?.username).localeCompare(
-							'' + p2.user?.username,
+						return ('' + order[0].user?.username).localeCompare(
+							'' + order[1].user?.username,
 						);
 					default:
-						return (p1.id ?? 0) - (p2.id ?? 0);
+						return (order[0].id ?? 0) - (order[1].id ?? 0);
 				}
 			}),
 );

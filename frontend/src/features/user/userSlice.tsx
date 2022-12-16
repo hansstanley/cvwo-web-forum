@@ -67,4 +67,6 @@ export const selectAuth: (state: RootState) => AuthResponse | undefined = (
 export const selectLoginSuccess: (state: RootState) => boolean = (state) =>
 	state.user.status.status === 'success';
 
+export const selectUser = (state: RootState) => state.user.userInfo;
+
 export default userSlice.reducer;

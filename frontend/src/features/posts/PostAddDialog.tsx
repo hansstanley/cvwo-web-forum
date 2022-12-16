@@ -16,7 +16,7 @@ import {
 	Typography,
 	Zoom,
 } from '@mui/material';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
@@ -47,6 +47,11 @@ export default function PostAddDialog({
 		postToEdit?.tags ?? [],
 	);
 	const [newTag, setNewTag] = useState<string>('');
+
+	const inactiveTags = useMemo(
+		() => postsTags.filter((tag) => !activeTags.includes(tag)),
+		[postsTags, activeTags],
+	);
 
 	const handleClose = () => {
 		onClose();
@@ -96,7 +101,8 @@ export default function PostAddDialog({
 		setActiveTags(activeTags.filter((t) => t !== tag));
 	};
 
-	const handleTagAdd = () => {
+	const handleTagAdd = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
 		handleTagClick(newTag)();
 		setNewTag('');
 	};
@@ -129,44 +135,53 @@ export default function PostAddDialog({
 						onChange={handleDescriptionChange}
 					/>
 					<Divider orientation="horizontal" flexItem />
-					<Typography>Choose tags (optional):</Typography>
-					<TextField
-						fullWidth
-						placeholder="Add tags..."
-						value={newTag}
-						onChange={handleNewTagChange}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<Stack direction="row" spacing={1}>
-										{activeTags.map((tag, index) => (
-											<Chip
-												key={index}
-												label={tag}
-												variant="outlined"
-												onDelete={handleTagDelete(tag)}
-											/>
-										))}
-									</Stack>
-								</InputAdornment>
-							),
-							endAdornment: (
-								<InputAdornment position="end">
-									<Zoom in={!!newTag}>
-										<IconButton onClick={handleTagAdd}>
-											<Add />
-										</IconButton>
-									</Zoom>
-								</InputAdornment>
-							),
-						}}
-					/>
-					<Stack direction="row" spacing={1}>
-						{postsTags
-							.filter((tag) => !activeTags.includes(tag))
-							.map((tag, index) => (
-								<Chip key={index} label={tag} onClick={handleTagClick(tag)} />
+					<Stack
+						component="form"
+						direction="column"
+						spacing={1}
+						onSubmit={handleTagAdd}>
+						<Typography>Choose tags (optional):</Typography>
+						<TextField
+							fullWidth
+							label="Create a new tag"
+							value={newTag}
+							margin="dense"
+							onChange={handleNewTagChange}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+										<Zoom in={!!newTag}>
+											<IconButton type="submit">
+												<Add />
+											</IconButton>
+										</Zoom>
+									</InputAdornment>
+								),
+							}}
+						/>
+						<Stack direction="row" flexWrap="wrap">
+							{activeTags.map((tag, index) => (
+								<Chip
+									key={index}
+									label={tag}
+									variant="outlined"
+									onDelete={handleTagDelete(tag)}
+									sx={{ mb: 1, mr: 1 }}
+								/>
 							))}
+						</Stack>
+						<Typography>Available tags:</Typography>
+						<Stack direction="row" spacing={1}>
+							{inactiveTags.length > 0 ? (
+								inactiveTags.map((tag, index) => (
+									<Chip key={index} label={tag} onClick={handleTagClick(tag)} />
+								))
+							) : (
+								<Typography variant="body2" fontStyle="italic">
+									No more tags, create one above
+								</Typography>
+							)}
+						</Stack>
 					</Stack>
 				</Stack>
 			</DialogContent>

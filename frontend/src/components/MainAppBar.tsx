@@ -12,7 +12,7 @@ import UserWelcome from '../features/user/UserWelcome';
 
 export default function MainAppBar() {
 	return (
-		<AppBar position="fixed">
+		<AppBar position="fixed" color="default">
 			<Toolbar>
 				<Typography variant="h6" fontWeight="bold">
 					Gossip on Rails

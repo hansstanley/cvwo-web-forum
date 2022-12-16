@@ -111,6 +111,7 @@ export default function CommentStrip({
 			<Stack direction="row" flex={1} my={1} alignItems="flex-start">
 				<Divider
 					orientation="vertical"
+					variant="middle"
 					flexItem
 					sx={{ bgcolor: commentColor }}
 				/>
