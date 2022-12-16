@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { ThemeToggle } from '../features/theme';
 import { UserAuthButton } from '../features/user';
-import UserWelcome from '../features/user/UserWelcome';
 
 export default function MainAppBar() {
 	return (
@@ -23,7 +22,6 @@ export default function MainAppBar() {
 					spacing={1}
 					alignItems="center"
 					divider={<Divider orientation="vertical" flexItem />}>
-					{UserWelcome()}
 					<UserAuthButton />
 					<ThemeToggle />
 				</Stack>

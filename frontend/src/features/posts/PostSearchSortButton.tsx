@@ -42,8 +42,10 @@ export default function PostSearchSortButton() {
 				{sortTerm.term}
 			</Button>
 			<Menu anchorEl={anchor} open={open} onClose={handleClose}>
-				{terms.map((term) => (
-					<MenuItem onClick={handleSort(term)}>{_.upperFirst(term)}</MenuItem>
+				{terms.map((term, index) => (
+					<MenuItem key={index} onClick={handleSort(term)}>
+						{_.upperFirst(term)}
+					</MenuItem>
 				))}
 			</Menu>
 		</>

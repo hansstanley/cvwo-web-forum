@@ -1,11 +1,13 @@
 import { Tab, Tabs } from '@mui/material';
 import { SyntheticEvent, useState } from 'react';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { FilterTerm } from '../../types/post';
+import { selectLoginSuccess } from '../user/userSlice';
 import { setFilterTerm } from './postsSlice';
 
 export default function PostSearchTabs() {
 	const dispatch = useAppDispatch();
+	const loginSuccess = useAppSelector(selectLoginSuccess);
 	const [tab, setTab] = useState(0);
 
 	const handleChange = (event: SyntheticEvent, newTab: number) => {
@@ -17,7 +19,7 @@ export default function PostSearchTabs() {
 	return (
 		<Tabs variant="fullWidth" value={tab} onChange={handleChange}>
 			<Tab label="All posts" />
-			<Tab label="My posts" />
+			<Tab label="My posts" disabled={!loginSuccess} />
 		</Tabs>
 	);
 }

@@ -71,7 +71,7 @@ export default function PostSearch() {
 			</Collapse>
 			<Card sx={{ mt: 2 }}>
 				<CardHeader
-					subheader="Tags"
+					subheader="Tags and filters"
 					action={
 						<Stack direction="row" spacing={1}>
 							<PostSearchSortButton />
