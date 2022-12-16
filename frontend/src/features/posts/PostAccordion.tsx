@@ -31,6 +31,7 @@ import {
 	useState,
 } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { formatTimestamp } from '../../app/utils';
 import { ForumPost } from '../../types/post';
 import { selectMobile } from '../theme/themeSlice';
 import { selectLoginSuccess } from '../user/userSlice';
@@ -113,13 +114,14 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 						direction="row"
 						spacing={1}
 						divider={<Divider orientation="vertical" flexItem />}>
-						{[post.user?.username || 'Unknown', post.created_at].map(
-							(s, index) => (
-								<Typography key={index} variant="caption">
-									{s}
-								</Typography>
-							),
-						)}
+						{[
+							post.user?.username || 'Unknown',
+							formatTimestamp(post.created_at ?? ''),
+						].map((s, index) => (
+							<Typography key={index} variant="caption">
+								{s}
+							</Typography>
+						))}
 					</Stack>
 				</Stack>
 			</AccordionSummary>

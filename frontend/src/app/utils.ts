@@ -1,4 +1,5 @@
 import { colors } from '@mui/material';
+import dayjs from 'dayjs';
 import { AuthResponse } from '../types/user';
 import { AUTH_TOKEN_KEY, COLORS } from './constants';
 
@@ -18,4 +19,8 @@ export function setAuth(auth: AuthResponse | undefined) {
 
 export function randomColor() {
 	return COLORS[Math.floor(Math.random() * COLORS.length)];
+}
+
+export function formatTimestamp(timestamp: string) {
+	return dayjs(timestamp).format('D MMM YYYY hh:mm A');
 }

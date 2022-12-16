@@ -19,7 +19,7 @@ import { Stack } from '@mui/system';
 import { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../app/constants';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { randomColor } from '../../app/utils';
+import { formatTimestamp, randomColor } from '../../app/utils';
 import { ForumComment } from '../../types/post';
 import { selectLightMode } from '../theme/themeSlice';
 import { selectLoginSuccess } from '../user/userSlice';
@@ -87,7 +87,9 @@ export default function CommentStrip({
 			<Typography variant="body1" fontWeight="bold">
 				{comment.user?.username ?? 'Unknown'}
 			</Typography>
-			<Typography variant="caption">{comment.updated_at}</Typography>
+			<Typography variant="caption">
+				{formatTimestamp(comment.updated_at ?? '')}
+			</Typography>
 		</Stack>
 	);
 
