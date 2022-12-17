@@ -1,5 +1,4 @@
-import { Divider, List, ListItem, Typography } from '@mui/material';
-import { useAppSelector } from '../../app/hooks';
+import { Divider, List, Typography } from '@mui/material';
 import { ForumComment } from '../../types/post';
 import CommentStrip from './CommentStrip';
 
@@ -9,6 +8,13 @@ export interface CommentListProps {
 	depth?: number;
 }
 
+/**
+ * Recursive component to display CommentStrip components
+ * in a list format.
+ * @param param0 Props.
+ * @returns List if comments exist,
+ * 					Divider otherwise.
+ */
 export default function CommentList({
 	comments,
 	canReply = false,

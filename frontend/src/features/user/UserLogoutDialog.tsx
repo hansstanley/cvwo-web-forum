@@ -14,6 +14,11 @@ export interface UserLogoutDialogProps {
 	onClose: () => void;
 }
 
+/**
+ * Dialog component to request user confirmation.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function UserLogoutDialog({
 	open,
 	onClose,

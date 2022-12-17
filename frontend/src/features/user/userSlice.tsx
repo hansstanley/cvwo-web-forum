@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { AuthResponse, User } from '../../types/user';
 import { FetchStatus } from '../../types/common';

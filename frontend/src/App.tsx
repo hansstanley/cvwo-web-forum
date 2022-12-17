@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import logo from './logo.svg';
+import { useEffect, useMemo } from 'react';
 import './App.css';
 import {
 	Box,
 	createTheme,
 	CssBaseline,
 	ThemeProvider,
-	Toolbar,
 	useMediaQuery,
 } from '@mui/material';
 import { MainAppBar, MainFrame } from './components';

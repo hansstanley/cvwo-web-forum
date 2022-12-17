@@ -12,7 +12,6 @@ import { useAppDispatch } from '../../app/hooks';
 import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { deleteComment, updateComment } from './commentsApi';
-import { setComments } from './commentsSlice';
 
 export interface CommentEditDialogProps {
 	open: boolean;
@@ -20,6 +19,11 @@ export interface CommentEditDialogProps {
 	comment: ForumComment;
 }
 
+/**
+ * Dialog component with a text field to edit comments.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function CommentEditDialog({
 	open,
 	onClose,

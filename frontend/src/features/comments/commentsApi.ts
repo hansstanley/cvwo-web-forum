@@ -4,6 +4,9 @@ import { RootState } from '../../app/store';
 import { ForumComment, ForumPost } from '../../types/post';
 import { selectClient } from '../api/apiSlice';
 
+/**
+ * Thunk to fetch comments belonging to a given ForumPost.
+ */
 export const fetchCommentsByPost = createAsyncThunk(
 	'comments/all/post',
 	async (post: ForumPost, { getState }) => {
@@ -23,6 +26,9 @@ export const fetchCommentsByPost = createAsyncThunk(
 	},
 );
 
+/**
+ * Thunk to fetch children comments of a given ForumComment.
+ */
 export const fetchCommentsByComment = createAsyncThunk(
 	'comments/all/comment',
 	async (comment: ForumComment, { getState }) => {

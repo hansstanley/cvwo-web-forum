@@ -10,7 +10,6 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PostSearchBar from './PostSearchBar';
@@ -18,6 +17,10 @@ import PostSearchSortButton from './PostSearchSortButton';
 import PostSearchTabs from './PostSearchTabs';
 import { addSearchTag, dropSearchTag, selectPostsTags } from './postsSlice';
 
+/**
+ * Container for components related to searching ForumPosts.
+ * @returns Stack.
+ */
 export default function PostSearch() {
 	const dispatch = useAppDispatch();
 	const { searchTags } = useAppSelector((state) => state.posts);

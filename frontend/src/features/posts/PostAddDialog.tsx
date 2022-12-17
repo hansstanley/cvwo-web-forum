@@ -3,7 +3,6 @@ import { LoadingButton } from '@mui/lab';
 import {
 	Button,
 	Chip,
-	Collapse,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -16,12 +15,12 @@ import {
 	Typography,
 	Zoom,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, updatePost } from './postApi';
-import { selectPostsTags, setPosts } from './postsSlice';
+import { selectPostsTags } from './postsSlice';
 
 export interface PostAddDialogProps {
 	open: boolean;
@@ -29,6 +28,11 @@ export interface PostAddDialogProps {
 	postToEdit?: ForumPost;
 }
 
+/**
+ * Dialog component to create new ForumPosts.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function PostAddDialog({
 	open,
 	onClose,

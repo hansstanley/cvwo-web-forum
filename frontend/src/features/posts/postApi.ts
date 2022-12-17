@@ -6,6 +6,9 @@ import { selectClient } from '../api/apiSlice';
 
 const BASE_ROUTE = 'forum_posts';
 
+/**
+ * Thunk to fetch all ForumPosts.
+ */
 export const fetchPosts = createAsyncThunk(
 	'posts/all',
 	async (_, { getState }) => {
@@ -20,6 +23,9 @@ export const fetchPosts = createAsyncThunk(
 	},
 );
 
+/**
+ * Thunk to create a ForumPost.
+ */
 export const createPost = createAsyncThunk(
 	'posts/create',
 	async (post: ForumPost, { getState }) => {
@@ -48,6 +54,9 @@ export const createPost = createAsyncThunk(
 	},
 );
 
+/**
+ * Thunk to update a ForumPost.
+ */
 export const updatePost = createAsyncThunk(
 	'posts/update',
 	async (post: ForumPost, { getState }) => {
@@ -68,6 +77,9 @@ export const updatePost = createAsyncThunk(
 	},
 );
 
+/**
+ * Thunk to delete a ForumPost.
+ */
 export const deletePost = createAsyncThunk(
 	'posts/delete',
 	async (post: ForumPost, { getState }) => {

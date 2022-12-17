@@ -1,10 +1,7 @@
-import { Delete, Edit, MoreHoriz, MoreVert, Reply } from '@mui/icons-material';
+import { MoreHoriz, MoreVert, Reply } from '@mui/icons-material';
 import {
-	Box,
 	Button,
-	ButtonGroup,
 	Collapse,
-	colors,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -12,14 +9,13 @@ import {
 	IconButton,
 	ListItem,
 	ListItemButton,
-	ListItemText,
 	Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { COLORS } from '../../app/constants';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { formatTimestamp, randomColor } from '../../app/utils';
+import { useAppSelector } from '../../app/hooks';
+import { formatTimestamp } from '../../app/utils';
 import { ForumComment } from '../../types/post';
 import { selectLightMode } from '../theme/themeSlice';
 import { selectLoginSuccess } from '../user/userSlice';
@@ -34,6 +30,11 @@ export interface CommentStripProps {
 	depth?: number;
 }
 
+/**
+ * Recursive component to display a ForumComment and its children comments.
+ * @param param0 Props.
+ * @returns ListItem.
+ */
 export default function CommentStrip({
 	comment,
 	canReply = false,
@@ -180,6 +181,10 @@ export default function CommentStrip({
 	);
 }
 
+/**
+ * Component that represents a deleted comment.
+ * @returns Stack.
+ */
 function DeletedStrip() {
 	return (
 		<Stack flex={1} direction="column" spacing={1}>

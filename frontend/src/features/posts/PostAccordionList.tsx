@@ -1,10 +1,14 @@
-import { Box, Chip, Divider, Typography } from '@mui/material';
+import { Box, Chip, Divider } from '@mui/material';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PostAccordion from './PostAccordion';
 import { fetchPosts } from './postApi';
 import { selectPostsToShow } from './postsSlice';
 
+/**
+ * Component that lists ForumPosts in an accordion format.
+ * @returns Box.
+ */
 export default function PostAccordionList() {
 	const dispatch = useAppDispatch();
 	const { status, errorMessage } = useAppSelector(

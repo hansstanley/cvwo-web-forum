@@ -1,18 +1,14 @@
-import {
-	Box,
-	Collapse,
-	Divider,
-	LinearProgress,
-	Paper,
-	Stack,
-	Typography,
-} from '@mui/material';
+import { Box, Collapse, Divider, Stack, Typography } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { CommentAdder, CommentList } from '../comments';
 import { fetchCommentsByPost } from '../comments/commentsApi';
 import { selectCommentsSortedByTimestamp } from '../comments/commentsSlice';
 
+/**
+ * Container for CommentAdder and CommentList.
+ * @returns Stack.
+ */
 export default function PostDetail() {
 	const dispatch = useAppDispatch();
 	const { currPost } = useAppSelector((state) => state.posts);

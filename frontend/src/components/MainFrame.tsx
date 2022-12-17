@@ -1,23 +1,15 @@
-import {
-	Box,
-	Divider,
-	Paper,
-	Stack,
-	Toolbar,
-	useMediaQuery,
-	useTheme,
-} from '@mui/material';
+import { Box, Divider, Paper, Stack, Toolbar } from '@mui/material';
 import { useAppSelector } from '../app/hooks';
-import {
-	PostAccordionList,
-	PostAccordion,
-	PostDetail,
-} from '../features/posts';
+import { PostAccordionList, PostDetail } from '../features/posts';
 
 import PostSearch from '../features/posts/PostSearch';
 import { selectMobile } from '../features/theme/themeSlice';
 import { AppProps } from '../types/common';
 
+/**
+ * Main container of the web forum body.
+ * @returns Stack.
+ */
 export default function MainFrame() {
 	const isMobile = useAppSelector(selectMobile);
 
@@ -45,6 +37,12 @@ export default function MainFrame() {
 	);
 }
 
+/**
+ * Containers restricted to the height of the viewport,
+ * with internal scrolling enabled.
+ * @param param0 AppProps.
+ * @returns FixedHeightFrame.
+ */
 function FixedHeightFrame({ children }: AppProps) {
 	return (
 		<Box sx={{ flex: 1, height: '100%', overflow: 'auto', p: 2 }}>

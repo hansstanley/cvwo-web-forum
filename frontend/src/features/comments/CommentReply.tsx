@@ -4,7 +4,6 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogTitle,
 	Stack,
 	TextField,
 } from '@mui/material';
@@ -13,7 +12,6 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
-import { setComments } from './commentsSlice';
 import CommentStrip from './CommentStrip';
 
 export interface CommentReplyProps {
@@ -22,6 +20,12 @@ export interface CommentReplyProps {
 	onClose: () => void;
 }
 
+/**
+ * Dialog component with a text field to reply to comments,
+ * and a view to see the comment thread being replied to.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function CommentReply({
 	open,
 	comment,

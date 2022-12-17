@@ -9,6 +9,10 @@ import {
 import { ThemeToggle } from '../features/theme';
 import { UserAuthButton } from '../features/user';
 
+/**
+ * App bar of the forum.
+ * @returns AppBar.
+ */
 export default function MainAppBar() {
 	return (
 		<AppBar position="fixed" color="default">

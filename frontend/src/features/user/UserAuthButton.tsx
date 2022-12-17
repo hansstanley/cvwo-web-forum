@@ -16,6 +16,11 @@ import UserLoginDialog from './UserLoginDialog';
 import UserLogoutDialog from './UserLogoutDialog';
 import { selectLoginSuccess, selectUser } from './userSlice';
 
+/**
+ * Component containing the login button, login and logout dialogs,
+ * and menu for account actions.
+ * @returns Button, Dialog, Menu.
+ */
 export default function UserAuthButton() {
 	const success = useAppSelector(selectLoginSuccess);
 	const user = useAppSelector(selectUser);

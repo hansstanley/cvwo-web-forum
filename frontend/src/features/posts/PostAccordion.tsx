@@ -4,13 +4,8 @@ import {
 	AccordionActions,
 	AccordionDetails,
 	AccordionSummary,
-	Box,
-	Button,
 	Chip,
-	Collapse,
 	Dialog,
-	DialogContent,
-	DialogTitle,
 	Divider,
 	IconButton,
 	Paper,
@@ -18,8 +13,6 @@ import {
 	Stack,
 	Tooltip,
 	Typography,
-	useMediaQuery,
-	useTheme,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import {
@@ -39,12 +32,17 @@ import PostAddDialog from './PostAddDialog';
 
 import PostDeleteDialog from './PostDeleteDialog';
 import PostDetail from './PostDetail';
-import { addSearchTag, setCurrPostId, setPosts } from './postsSlice';
+import { addSearchTag, setCurrPostId } from './postsSlice';
 
 export interface PostAccordionProps {
 	post: ForumPost;
 }
 
+/**
+ * Component to display a ForumPost.
+ * @param param0 Props.
+ * @returns Accordion.
+ */
 export default function PostAccordion({ post }: PostAccordionProps) {
 	const dispatch = useAppDispatch();
 	const { currPost } = useAppSelector((state) => state.posts);
@@ -182,6 +180,9 @@ export default function PostAccordion({ post }: PostAccordionProps) {
 	);
 }
 
+/**
+ * Slide-up transition for comments dialog in mobile view.
+ */
 const Transition = forwardRef(function Transition(
 	props: TransitionProps & { children: ReactElement<any, any> },
 	ref: Ref<unknown>,

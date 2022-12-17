@@ -1,11 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	TextField,
-} from '@mui/material';
+import { Card, CardActions, CardContent, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
 import { ChangeEvent, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -17,6 +11,11 @@ export interface CommentAdderProps {
 	parentComment?: ForumComment;
 }
 
+/**
+ * Component with a text field to post comments.
+ * @param param0 Props.
+ * @returns Card.
+ */
 export default function CommentAdder({ parentComment }: CommentAdderProps) {
 	const dispatch = useAppDispatch();
 	const { currPost } = useAppSelector((state) => state.posts);

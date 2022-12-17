@@ -1,9 +1,4 @@
-import {
-	ArrowDropDown,
-	ArrowDropUp,
-	ThumbDown,
-	ThumbUp,
-} from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
 
 export interface UpDownVoterProps {
@@ -11,6 +6,11 @@ export interface UpDownVoterProps {
 	downVoteCount: number;
 }
 
+/**
+ * Button group with upvote and downvote buttons.
+ * @param param0 Props.
+ * @returns ButtonGroup.
+ */
 export default function UpDownVoter({
 	upVoteCount,
 	downVoteCount,

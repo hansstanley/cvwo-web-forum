@@ -5,6 +5,10 @@ import { FilterTerm } from '../../types/post';
 import { selectLoginSuccess } from '../user/userSlice';
 import { setFilterTerm } from './postsSlice';
 
+/**
+ * Tabs component to select a category of ForumPosts.
+ * @returns Tabs.
+ */
 export default function PostSearchTabs() {
 	const dispatch = useAppDispatch();
 	const loginSuccess = useAppSelector(selectLoginSuccess);

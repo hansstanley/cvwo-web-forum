@@ -61,6 +61,11 @@ const commentsSlice = createSlice({
 
 export const { setComments } = commentsSlice.actions;
 
+/**
+ * Sorts comments by their creation timestamp in descending order.
+ * @param state RootState.
+ * @returns Sorted comments.
+ */
 export const selectCommentsSortedByTimestamp: (
 	state: RootState,
 ) => ForumComment[] = (state) => {

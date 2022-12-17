@@ -10,6 +10,11 @@ import { ChangeEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setSearchTerm } from './postsSlice';
 
+/**
+ * Text field for searching ForumPosts.
+ * @param props Props.
+ * @returns TextField.
+ */
 export default function PostSearchBar(props: TextFieldProps) {
 	const dispatch = useAppDispatch();
 	const { searchTerm } = useAppSelector((state) => state.posts);

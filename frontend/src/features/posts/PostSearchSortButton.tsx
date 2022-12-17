@@ -3,9 +3,13 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import _ from 'lodash';
 import { MouseEvent, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { SortByTerm, SortTerm } from '../../types/post';
+import { SortByTerm } from '../../types/post';
 import { selectSortTerm, setSortTerm } from './postsSlice';
 
+/**
+ * Button with a menu to choose a ForumPost property to sort by.
+ * @returns Button, Menu.
+ */
 export default function PostSearchSortButton() {
 	const dispatch = useAppDispatch();
 	const sortTerm = useAppSelector(selectSortTerm);

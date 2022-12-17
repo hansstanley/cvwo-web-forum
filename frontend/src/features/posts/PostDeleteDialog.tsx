@@ -12,7 +12,7 @@ import { useAppDispatch } from '../../app/hooks';
 import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { deletePost } from './postApi';
-import { setCurrPostId, setPosts } from './postsSlice';
+import { setCurrPostId } from './postsSlice';
 
 export interface PostDeleteDialogProps {
 	open: boolean;
@@ -20,6 +20,11 @@ export interface PostDeleteDialogProps {
 	post: ForumPost;
 }
 
+/**
+ * Dialog componentt to request user confirmation.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function PostDeleteDialog({
 	open,
 	onClose,

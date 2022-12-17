@@ -138,6 +138,11 @@ export const {
 	setPosts,
 } = postsSlice.actions;
 
+/**
+ * Retrieves all existing tags from all ForumPosts.
+ * @param state RootState.
+ * @returns Array of all tags.
+ */
 export const selectPostsTags: (state: RootState) => string[] = (state) => {
 	const tags = new Set<string>();
 	for (let post of state.posts.posts) {
@@ -156,9 +161,19 @@ export const selectFilterTerm = (state: RootState) => state.posts.filterTerm;
 export const selectSortTerm: (state: RootState) => SortTerm = (state) =>
 	state.posts.sortTerm;
 
+/**
+ * Retrieves the currently selected search tags and transforms them to lowercase.
+ * @param state RootState.
+ * @returns Array of search tags in lowercase.
+ */
 const selectSearchTags: (state: RootState) => string[] = (state) =>
 	state.posts.searchTags.map((tag) => tag.trim().toLowerCase());
 
+/**
+ * Transforms the search string to an array of lowercase, trimmed words.
+ * @param state RootState.
+ * @returns Array of search words.
+ */
 const selectSearchTerms: (state: RootState) => string[] = (state) =>
 	state.posts.searchTerm
 		?.trim()
@@ -166,6 +181,10 @@ const selectSearchTerms: (state: RootState) => string[] = (state) =>
 		.map((term) => term.trim().toLowerCase())
 		.filter((term) => !!term) ?? [];
 
+/**
+ * Selector that processes the list of all ForumPosts and
+ * applies the necessary filters, sorts and searches.
+ */
 export const selectPostsToShow = createSelector(
 	[
 		selectPosts,
@@ -215,6 +234,13 @@ export const selectPostsToShow = createSelector(
 
 export default postsSlice.reducer;
 
+/**
+ * Checks whether the string s fulfils the search terms.
+ * @param s String or array of strings to search through.
+ * @param searchTerms Terms to search for.
+ * @returns True if any of searchTerms exists in s, or searchTerms is empty;
+ * 					False otherwise.
+ */
 function stringHasTerms(s: string | string[], searchTerms: string[]) {
 	if (searchTerms.length === 0) return true;
 	if (typeof s === 'string') {

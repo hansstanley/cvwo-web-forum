@@ -1,4 +1,3 @@
-import { Close } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
@@ -8,12 +7,9 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle,
-	IconButton,
 	Stack,
 	TextField,
-	Typography,
 } from '@mui/material';
 import {
 	ChangeEvent,
@@ -31,6 +27,11 @@ export interface UserLoginDialogProps {
 	onClose: () => void;
 }
 
+/**
+ * Dialog component with a user login form.
+ * @param param0 Props.
+ * @returns Dialog.
+ */
 export default function UserLoginDialog({
 	open,
 	onClose,

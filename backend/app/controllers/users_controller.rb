@@ -3,6 +3,8 @@ class UsersController < ApplicationController
   before_action :authenticate_user, except: :create
   before_action :set_user, only: %i[show update destroy]
 
+  # GET /users
+  # GET /users?username
   def index
     if params.key?(:username)
       set_user_by_username
