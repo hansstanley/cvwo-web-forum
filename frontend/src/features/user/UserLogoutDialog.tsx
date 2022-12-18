@@ -7,6 +7,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { useAppDispatch } from '../../app/hooks';
+import { resetAuth } from '../auth/authSlice';
+import { pushSnack } from '../snacks/snacksSlice';
 import { onLogout } from './userSlice';
 
 export interface UserLogoutDialogProps {
@@ -31,6 +33,8 @@ export default function UserLogoutDialog({
 
 	const handleLogout = () => {
 		dispatch(onLogout());
+		dispatch(resetAuth());
+		dispatch(pushSnack({ message: 'Goodbye!', severity: 'info' }));
 		handleClose();
 	};
 

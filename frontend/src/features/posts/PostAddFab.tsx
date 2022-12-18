@@ -24,7 +24,11 @@ export default function PostAddFab() {
 					<Fab
 						color="primary"
 						onClick={toggleDialogOpen(true)}
-						sx={{ position: 'fixed', bottom: 16, right: 16 }}>
+						sx={{
+							position: 'fixed',
+							bottom: (theme) => theme.spacing(2),
+							right: (theme) => theme.spacing(2),
+						}}>
 						<Add />
 					</Fab>
 				</Zoom>

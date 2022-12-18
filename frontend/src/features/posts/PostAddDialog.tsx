@@ -19,7 +19,7 @@ import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
-import { createPost, updatePost } from './postApi';
+import { createPost, updatePost } from './postsApi';
 import { selectPostsTags } from './postsSlice';
 
 export interface PostAddDialogProps {
@@ -175,10 +175,15 @@ export default function PostAddDialog({
 							))}
 						</Stack>
 						<Typography>Available tags:</Typography>
-						<Stack direction="row" spacing={1}>
+						<Stack direction="row" flexWrap="wrap">
 							{inactiveTags.length > 0 ? (
 								inactiveTags.map((tag, index) => (
-									<Chip key={index} label={tag} onClick={handleTagClick(tag)} />
+									<Chip
+										key={index}
+										label={tag}
+										onClick={handleTagClick(tag)}
+										sx={{ mr: 1, mb: 1 }}
+									/>
 								))
 							) : (
 								<Typography variant="body2" fontStyle="italic">

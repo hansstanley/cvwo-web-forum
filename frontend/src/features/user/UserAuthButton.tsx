@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { MouseEvent, useMemo, useState } from 'react';
 import { useAppSelector } from '../../app/hooks';
+import UserAccountDialog from './UserAccountDialog';
 import UserLoginDialog from './UserLoginDialog';
 import UserLogoutDialog from './UserLogoutDialog';
 import { selectLoginSuccess, selectUser } from './userSlice';
@@ -26,6 +27,7 @@ export default function UserAuthButton() {
 	const user = useAppSelector(selectUser);
 	const [loginOpen, setLoginOpen] = useState(false);
 	const [logoutOpen, setLogoutOpen] = useState(false);
+	const [accountOpen, setAccountOpen] = useState(false);
 	const [anchor, setAnchor] = useState<HTMLElement | null>();
 
 	const menuOpen = useMemo(() => !!anchor, [anchor]);
@@ -36,6 +38,11 @@ export default function UserAuthButton() {
 
 	const toggleLogoutOpen = (open: boolean) => () => {
 		setLogoutOpen(open);
+		handleMenuClose();
+	};
+
+	const toggleAccountOpen = (open: boolean) => () => {
+		setAccountOpen(open);
 		handleMenuClose();
 	};
 
@@ -60,13 +67,17 @@ export default function UserAuthButton() {
 			)}
 			<UserLoginDialog open={loginOpen} onClose={toggleLoginOpen(false)} />
 			<UserLogoutDialog open={logoutOpen} onClose={toggleLogoutOpen(false)} />
+			<UserAccountDialog
+				open={accountOpen}
+				onClose={toggleAccountOpen(false)}
+			/>
 			<Menu anchorEl={anchor} open={menuOpen} onClose={handleMenuClose}>
 				<Divider variant="middle">
 					<Typography fontWeight="bold">
 						{user?.username ?? 'Unknown'}
 					</Typography>
 				</Divider>
-				<MenuItem>
+				<MenuItem onClick={toggleAccountOpen(true)}>
 					<ListItemIcon>
 						<AccountCircle />
 					</ListItemIcon>

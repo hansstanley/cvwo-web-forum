@@ -1,14 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { AuthResponse, User } from '../../types/user';
+import { User } from '../../types/user';
 import { FetchStatus } from '../../types/common';
 import { fetchUserByUsername, handleUserLogin } from './userApi';
-import { getAuth, setAuth } from '../../app/utils';
 
 interface UserState {
 	status: FetchStatus;
 	userInfo?: User;
-	auth?: AuthResponse;
 }
 
 const initialState: UserState = {
@@ -19,11 +17,7 @@ const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		initAuth: (state) => {
-			state.auth = getAuth();
-		},
 		onLogout: (state) => {
-			setAuth(undefined);
 			return { status: { status: 'idle' } };
 		},
 	},
@@ -58,11 +52,7 @@ const userSlice = createSlice({
 	},
 });
 
-export const { initAuth, onLogout } = userSlice.actions;
-
-export const selectAuth: (state: RootState) => AuthResponse | undefined = (
-	state,
-) => state.user.auth;
+export const { onLogout } = userSlice.actions;
 
 export const selectLoginSuccess: (state: RootState) => boolean = (state) =>
 	state.user.status.status === 'success';

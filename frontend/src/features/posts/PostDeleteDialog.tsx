@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
-import { deletePost } from './postApi';
+import { deletePost } from './postsApi';
 import { setCurrPostId } from './postsSlice';
 
 export interface PostDeleteDialogProps {

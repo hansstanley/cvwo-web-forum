@@ -28,10 +28,24 @@ class UsersController < ApplicationController
     render json: @user
   end
 
+  # PATCH /users/:id
+  def update
+    if @current_user[:id] == @user[:id]
+      @user.update(user_params)
+      render json: @user
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
+  end
+
   # DELETE /users/:id
   def delete
-    @user.update({ deleted: true })
-    render json: @user
+    if @current_user[:id] == @user[:id]
+      @user.update({ deleted: true })
+      render json: @user
+    else
+      render json: { error: 'Invalid user' }, status: :unauthorized
+    end
   end
 
   private

@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { FilterTerm, ForumPost, SortTerm } from '../../types/post';
 import { FetchStatus } from '../../types/common';
-import { createPost, deletePost, fetchPosts, updatePost } from './postApi';
+import { createPost, deletePost, fetchPosts, updatePost } from './postsApi';
 import { selectUser } from '../user/userSlice';
 
 interface PostsState {

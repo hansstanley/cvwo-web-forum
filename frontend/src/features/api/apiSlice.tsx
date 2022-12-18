@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { selectAuth } from '../user/userSlice';
+import { selectAuth } from '../auth/authSlice';
 
 /**
  * Selector for the axios HTTP client, wrapped in createSelector so that

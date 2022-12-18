@@ -2,7 +2,7 @@ import { Box, Chip, Divider } from '@mui/material';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import PostAccordion from './PostAccordion';
-import { fetchPosts } from './postApi';
+import { fetchPosts } from './postsApi';
 import { selectPostsToShow } from './postsSlice';
 
 /**
