@@ -15,6 +15,7 @@ import { setAuth } from './app/utils';
 import { fetchUserByUsername } from './features/user/userApi';
 import { initAuth, selectAuth } from './features/auth/authSlice';
 import { pushSnack } from './features/snacks/snacksSlice';
+import { Helmet } from 'react-helmet';
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -54,6 +55,9 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
+			<Helmet>
+				<title>Gossip on Rails</title>
+			</Helmet>
 			<Box sx={{ display: 'flex' }}>
 				<CssBaseline />
 				<MainAppBar />
