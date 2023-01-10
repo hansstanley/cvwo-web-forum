@@ -2,7 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { User } from '../../types/user';
 import { FetchStatus } from '../../types/common';
-import { fetchUserByUsername, handleUserLogin } from './userApi';
+import {
+	fetchUserByUsername,
+	handleUserLogin,
+	updatePassword,
+	updateUsername,
+} from './userApi';
 
 interface UserState {
 	status: FetchStatus;
@@ -48,6 +53,13 @@ const userSlice = createSlice({
 					errorMessage: action.error.message,
 				};
 				state.userInfo = undefined;
+			});
+		builder
+			.addCase(updateUsername.fulfilled, (state, action) => {
+				state.userInfo = action.payload;
+			})
+			.addCase(updatePassword.fulfilled, (state, action) => {
+				state.userInfo = action.payload;
 			});
 	},
 });

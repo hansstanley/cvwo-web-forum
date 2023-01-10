@@ -21,6 +21,7 @@ import { ForumPost } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createPost, updatePost } from './postsApi';
 import { selectPostsTags } from './postsSlice';
+import { pushSnack } from '../snacks/snacksSlice';
 
 export interface PostAddDialogProps {
 	open: boolean;
@@ -65,6 +66,19 @@ export default function PostAddDialog({
 	};
 
 	const handlePost = async () => {
+		if (!title) {
+			dispatch(
+				pushSnack({ message: 'Give your post a title!', severity: 'error' }),
+			);
+			return;
+		}
+		if (!description) {
+			dispatch(
+				pushSnack({ message: 'Enter a description!', severity: 'error' }),
+			);
+			return;
+		}
+
 		setStatus({ status: 'loading' });
 
 		const newPost: ForumPost = {
@@ -198,6 +212,7 @@ export default function PostAddDialog({
 				<Button onClick={handleClose}>Cancel</Button>
 				<LoadingButton
 					loading={status.status === 'loading'}
+					disabled={!title || !description}
 					onClick={handlePost}
 					variant="contained">
 					{isEdit ? 'Edit' : 'Post'}

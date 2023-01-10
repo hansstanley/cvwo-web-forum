@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
+import { pushSnack } from '../snacks/snacksSlice';
 
 export interface CommentAdderProps {
 	parentComment?: ForumComment;
@@ -28,6 +29,13 @@ export default function CommentAdder({ parentComment }: CommentAdderProps) {
 	const disabled = useMemo(() => userStatus.status !== 'success', [userStatus]);
 
 	const handlePostClick = async () => {
+		if (!content) {
+			dispatch(
+				pushSnack({ message: 'Write something first!', severity: 'error' }),
+			);
+			return;
+		}
+
 		setStatus({ status: 'loading' });
 		const newComment: ForumComment = {
 			content,
@@ -64,7 +72,7 @@ export default function CommentAdder({ parentComment }: CommentAdderProps) {
 			</CardContent>
 			<CardActions>
 				<LoadingButton
-					disabled={disabled}
+					disabled={disabled || !content}
 					loading={status.status === 'loading'}
 					onClick={handlePostClick}>
 					Post comment

@@ -13,6 +13,7 @@ import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { createComment } from './commentsApi';
 import CommentStrip from './CommentStrip';
+import { pushSnack } from '../snacks/snacksSlice';
 
 export interface CommentReplyProps {
 	open: boolean;
@@ -47,6 +48,13 @@ export default function CommentReply({
 	};
 
 	const handleCommentReply = async () => {
+		if (!reply) {
+			dispatch(
+				pushSnack({ message: 'Write something first!', severity: 'error' }),
+			);
+			return;
+		}
+
 		setStatus({ status: 'loading' });
 		try {
 			const newComment: ForumComment = {
@@ -82,7 +90,7 @@ export default function CommentReply({
 				<LoadingButton
 					loading={status.status === 'loading'}
 					variant="contained"
-					disabled={reply.length === 0}
+					disabled={!reply}
 					onClick={handleCommentReply}>
 					Reply
 				</LoadingButton>

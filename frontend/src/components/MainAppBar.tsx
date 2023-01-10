@@ -15,7 +15,7 @@ import { UserAuthButton } from '../features/user';
  */
 export default function MainAppBar() {
 	return (
-		<AppBar position="fixed" color="default">
+		<AppBar position="fixed" color="default" elevation={1}>
 			<Toolbar>
 				<Typography variant="h6" fontWeight="bold">
 					Gossip on Rails

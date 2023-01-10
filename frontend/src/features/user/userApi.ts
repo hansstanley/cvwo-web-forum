@@ -49,3 +49,35 @@ export const fetchUserByUsername = createAsyncThunk(
 		}
 	},
 );
+
+export const updateUsername = createAsyncThunk(
+	'user/update/username',
+	async (username: string, { getState }) => {
+		try {
+			const state = getState() as RootState;
+			const client = selectClient(state);
+			const id = state.user.userInfo?.id;
+			const response = await client.patch<User>(`users/${id}`, { username });
+			return response.data;
+		} catch (err) {
+			console.error(err);
+			throw err;
+		}
+	},
+);
+
+export const updatePassword = createAsyncThunk(
+	'user/update/password',
+	async (password: string, { getState }) => {
+		try {
+			const state = getState() as RootState;
+			const client = selectClient(state);
+			const id = state.user.userInfo?.id;
+			const response = await client.patch<User>(`users/${id}`, { password });
+			return response.data;
+		} catch (err) {
+			console.error(err);
+			throw err;
+		}
+	},
+);

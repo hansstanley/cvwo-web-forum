@@ -12,6 +12,7 @@ import { useAppDispatch } from '../../app/hooks';
 import { ForumComment } from '../../types/post';
 import { FetchStatus } from '../../types/common';
 import { deleteComment, updateComment } from './commentsApi';
+import { pushSnack } from '../snacks/snacksSlice';
 
 export interface CommentEditDialogProps {
 	open: boolean;
@@ -34,6 +35,7 @@ export default function CommentEditDialog({
 	const [content, setContent] = useState(comment.content);
 
 	const handleClose = () => {
+		setContent(comment.content);
 		onClose();
 	};
 
@@ -42,6 +44,16 @@ export default function CommentEditDialog({
 	};
 
 	const handleCommentUpdate = async () => {
+		if (!content) {
+			dispatch(
+				pushSnack({
+					message: 'Use the Delete button to remove a comment',
+					severity: 'warning',
+				}),
+			);
+			return;
+		}
+
 		setStatus({ status: 'loading' });
 		try {
 			const newComment: ForumComment = { ...comment };
@@ -90,6 +102,7 @@ export default function CommentEditDialog({
 				</LoadingButton>
 				<LoadingButton
 					loading={status.status === 'loading'}
+					disabled={!content}
 					variant="contained"
 					onClick={handleCommentUpdate}>
 					Edit
