@@ -7,8 +7,8 @@ services:
   - type: web
     name: cvwo-web-forum-backend
     env: ruby
-    buildCommand: './bin/render-build.sh'
-    startCommand: 'bundle exec puma -C config/puma.rb'
+    buildCommand: '.backend/bin/render-build.sh'
+    startCommand: 'bundle exec puma -C backend/config/puma.rb'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
